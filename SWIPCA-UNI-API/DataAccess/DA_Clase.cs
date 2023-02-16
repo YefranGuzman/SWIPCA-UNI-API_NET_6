@@ -20,12 +20,17 @@ namespace SWIPCA_UNI_API.DataAccess
 
                     using (var item = await consulta.ExecuteReaderAsync())
                     {
-                        while (item.ReadAsync()) { 
+                        while (await item.ReadAsync()) { 
                             var clase = new Clase();
-                            clase.IdDocente = int(item)["idDocente"]
+                            clase.IdDocente = (int)item["idDocente"];
+                            clase.Horainicio = (DateTime)item["HoraFinal"];
+                            clase.Horafinal = (DateTime)item["HoraInicio"];
+                            clase.Dia = (string)item["Dia"];
+                            ListClase.Add(clase);
                         }
                     }
                 }
+                return ListClase;
             }
         }
     }
