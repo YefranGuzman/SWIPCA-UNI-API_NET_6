@@ -13,9 +13,9 @@ namespace SWIPCA_UNI_API.Controllers
         public async Task <ActionResult<List<Asignatura>>> Get()
         {
             var Asignaturas = new DA_Asignatura();
-            var Lista = await Asignaturas.ListarAsignaturas();  
+            var ListaAsignatura = await Asignaturas.ListarAsignaturas();  
 
-            return (Lista);
+            return (ListaAsignatura);
         }
         
         [HttpPut("{idAsignatura}")]
