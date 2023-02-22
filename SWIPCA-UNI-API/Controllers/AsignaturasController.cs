@@ -9,7 +9,7 @@ namespace SWIPCA_UNI_API.Controllers
    
     public class AsignaturasController : Controller
     {
-        [HttpGet(Name = "ObtenerListaAsignaturas")]
+        [HttpGet]
         public async Task <ActionResult<List<Asignatura>>> Get()
         {
             var Asignaturas = new DA_Asignatura();
