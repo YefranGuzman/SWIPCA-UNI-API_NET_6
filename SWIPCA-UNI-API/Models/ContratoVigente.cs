@@ -1,10 +1,15 @@
-﻿namespace SWIPCA_UNI_API.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace SWIPCA_UNI_API.Models;
+
+public partial class ContratoVigente
 {
-    public class ContratoVigente
-    {
-        public int idcontrato { get; set; }
-        public string descripcion { get; set; }
-        public string jornada { get; set; }
-        public DateTime hora { get; set; }
-    }
+    public int IdContrato { get; set; }
+
+    public string Descripcion { get; set; } = null!;
+
+    public string Jornada { get; set; } = null!;
+
+    public TimeSpan Hora { get; set; }
 }

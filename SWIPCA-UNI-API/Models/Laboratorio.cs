@@ -1,9 +1,15 @@
-﻿namespace SWIPCA_UNI_API.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace SWIPCA_UNI_API.Models;
+
+public partial class Laboratorio
 {
-    public class Laboratorio
-    {
-        public int idLaboratorio { get; set; }
-        public string nombre { get; set; }
-        public int idFacultad { get; set; }
-    }
+    public int IdLaboratorio { get; set; }
+
+    public string Nombre { get; set; } = null!;
+
+    public int IdFacultad { get; set; }
+
+    public virtual Facultad IdFacultadNavigation { get; set; } = null!;
 }
