@@ -21,9 +21,9 @@ namespace SWIPCA_UNI_API.DataAccess
                         while (await item.ReadAsync())
                         {
                             var Asignatura = new Asignatura();
-                            Asignatura.idAsignatura = (int)item["Identificador"];
-                            Asignatura.nombre = (string)item["Nombre"];
-                            Asignatura.frecuencia = (int)item["FrecuenciaAsignatura"];
+                            Asignatura.IdAsignatura = (int)item["Identificador"];
+                            Asignatura.Nombre = (string)item["Nombre"];
+                            Asignatura.Frecuencia = (int)item["FrecuenciaAsignatura"];
                             ListAsignatura.Add(Asignatura);
                         }
                     }

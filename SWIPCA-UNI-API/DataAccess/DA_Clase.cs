@@ -23,8 +23,8 @@ namespace SWIPCA_UNI_API.DataAccess
                         while (await item.ReadAsync()) { 
                             var clase = new Clase();
                             clase.IdDocente = (int)item["idDocente"];
-                            clase.Horainicio = (DateTime)item["HoraFinal"];
-                            clase.Horafinal = (DateTime)item["HoraInicio"];
+                            clase.HoraInicio = (TimeSpan)item["HoraFinal"];
+                            clase.HoraFinal = (TimeSpan)item["HoraInicio"];
                             clase.Dia = (string)item["Dia"];
                             ListClase.Add(clase);
                         }

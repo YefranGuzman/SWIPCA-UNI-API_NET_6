@@ -22,10 +22,10 @@ namespace SWIPCA_UNI_API.DataAccess
                         while (await item.ReadAsync())
                         {
                             var Aulas = new Aula();
-                            Aulas.idAula = (int)item["Identificador"];
-                            Aulas.nombre = (string)item["Nombre"];
+                            Aulas.IdAula = (int)item["Identificador"];
+                            Aulas.Nombre = (string)item["Nombre"];
                             Aulas.NumeroAula = (string)item["NumeroAula"];
-                            Aulas.idFacultad = (int)item["idFacultad"];
+                            Aulas.IdFacultad = (int)item["idFacultad"];
                             ListAula.Add(Aulas);
                         }
                     }
