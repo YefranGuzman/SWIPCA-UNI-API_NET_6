@@ -22,6 +22,15 @@ namespace SWIPCA_UNI_API.DataAccess
             return listaDocentes;
         }
 
+        public async Task<List<string>> ObtenerDisponibilidadDocente(int idDocente)
+        {
+            var listarDisponibilidad = await (from a in db.Disponibilidads
+                                              join b in db.Docentes
+                                              on a.IdDocente equals b.IdDocente
+                                              where a.IdDocente == idDocente
+                                              select a.Dia).ToListAsync();
+            return listarDisponibilidad;
+        }
 
     }
 }
