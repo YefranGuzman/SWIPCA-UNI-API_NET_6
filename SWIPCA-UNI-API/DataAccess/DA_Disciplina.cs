@@ -9,11 +9,11 @@ namespace SWIPCA_UNI_API.DataAccess
 
         public async Task<List<string>> ObtenerNombresDisciplinas()
         {
-            var nombres = await db.Disciplinas
+            var ListaDisciplinas = await db.Disciplinas
                                    .Where(p => p.Nombre == null)
                                    .Select(p => p.Nombre)
                                    .ToListAsync();
-            return nombres;
+            return ListaDisciplinas;
         }
     }
 }

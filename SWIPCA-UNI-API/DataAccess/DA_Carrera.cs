@@ -8,32 +8,12 @@ namespace SWIPCA_UNI_API.DataAccess
 {
     public class DA_Carrera
     {
-        DB_Carga_Academica conexion = new DB_Carga_Academica();
+        DbCargaAcademicaContext conexion = new DbCargaAcademicaContext();
 
         public async Task<List<Carrera>> ListarCarreras()
         {
-            var ListCarrera = new List<Carrera>();
-            using (var sentenciasql = new SqlConnection(conexion.ConexionSQL()))
-            {
-                using (var consulta = new SqlCommand("sp_ListarCarrera", sentenciasql))
-                {
-                    await sentenciasql.OpenAsync();
-                    consulta.CommandType = CommandType.StoredProcedure;
-
-                    using (var item = await consulta.ExecuteReaderAsync())
-                    {
-                        while (await item.ReadAsync())
-                        {
-                            var Carrera = new Carrera();
-                            Carrera.IdCarrera = (int)item["idDocente"];
-                            Carrera.Nombre = (string)item["HoraFinal"];
-                            Carrera.IdFacultad = (int)item["HoraInicio"];
-                            ListCarrera.Add(Carrera);
-                        }
-                    }
-                }
-                return ListCarrera;
-            }
+            var carreras = await conexion.Carreras.ToListAsync();
+            return carreras;
         }
 
         public async Task<int> ActualizarCarrera(Carrera carrera)
@@ -41,7 +21,7 @@ namespace SWIPCA_UNI_API.DataAccess
             using (var db = new DbCargaAcademicaContext())
             {
                 // Consultar el registro que deseas actualizar.
-                var carreraExistente = await db.Carreras.FindAsync(carrera.IdCarrera);
+                var carreraExistente = await conexion.Carreras.FindAsync(carrera.IdCarrera);
 
                 if (carreraExistente != null)
                 {

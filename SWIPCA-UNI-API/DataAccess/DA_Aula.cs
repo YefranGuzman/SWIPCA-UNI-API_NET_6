@@ -1,4 +1,5 @@
 ﻿using SWIPCA_UNI_API.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using System.Data;
 
@@ -6,33 +7,11 @@ namespace SWIPCA_UNI_API.DataAccess
 {
     public class DA_Aula
     {
-        DB_Carga_Academica conexion = new DB_Carga_Academica();
-        public async Task<List<Aula>> ListarAsignaturas()
+        DbCargaAcademicaContext cn = new DbCargaAcademicaContext();
+        public async Task<List<Aula>> ListarAula()
         {
-            var ListAula = new List<Aula>();
-            using (var sentenciasql = new SqlConnection(conexion.ConexionSQL()))
-            {
-                using (var consulta = new SqlCommand("sp_ListarAula", sentenciasql))
-                {
-                    await sentenciasql.OpenAsync();
-                    consulta.CommandType = CommandType.StoredProcedure;
-
-                    using (var item = await consulta.ExecuteReaderAsync())
-                    {
-                        while (await item.ReadAsync())
-                        {
-                            var Aulas = new Aula();
-                            Aulas.IdAula = (int)item["Identificador"];
-                            Aulas.Nombre = (string)item["Nombre"];
-                            Aulas.NumeroAula = (string)item["NumeroAula"];
-                            Aulas.IdFacultad = (int)item["idFacultad"];
-                            ListAula.Add(Aulas);
-                        }
-                    }
-                }
-
-                return ListAula;
-            }
+            var listAula = await cn.Aulas.ToListAsync();
+            return listAula;
         }
     }
 }
