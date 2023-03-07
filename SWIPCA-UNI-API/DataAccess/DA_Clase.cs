@@ -10,8 +10,8 @@ namespace SWIPCA_UNI_API.DataAccess
 
         public async Task<List<Clase>> ListarClases()
         {
-            var clases = await db.Clases.ToListAsync();
-            return clases;
+            var Listarclases = await db.Clases.ToListAsync();
+            return Listarclases;
         }
     }
 }
