@@ -7,11 +7,15 @@ public partial class Grupo
 {
     public int IdGrupo { get; set; }
 
+    public int IdTurno { get; set; }
+
     public string Nombre { get; set; } = null!;
 
     public int IdCarrera { get; set; }
 
-    public int IdTurno { get; set; }
+    public int Turno { get; set; }
+
+    public virtual ICollection<CargaAcademica> CargaAcademicas { get; } = new List<CargaAcademica>();
 
     public virtual ICollection<Horario> Horarios { get; } = new List<Horario>();
 

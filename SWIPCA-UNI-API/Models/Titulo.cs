@@ -5,9 +5,13 @@ namespace SWIPCA_UNI_API.Models;
 
 public partial class Titulo
 {
-    public int IdTitulo { get; set; }
+    public int IdDocente { get; set; }
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Disciplina> Disciplinas { get; } = new List<Disciplina>();
+    public string Descripcion { get; set; } = null!;
+
+    public int Anio { get; set; }
+
+    public virtual Docente IdDocenteNavigation { get; set; } = null!;
 }

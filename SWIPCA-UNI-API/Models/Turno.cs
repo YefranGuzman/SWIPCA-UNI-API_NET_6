@@ -9,7 +9,11 @@ public partial class Turno
 
     public string Nombre { get; set; } = null!;
 
-    public virtual ICollection<Grupo> Grupos { get; } = new List<Grupo>();
+    public TimeSpan HoraInicio { get; set; }
 
-    public virtual ICollection<Periodo> Periodos { get; } = new List<Periodo>();
+    public TimeSpan HoraFinal { get; set; }
+
+    public string Dia { get; set; } = null!;
+
+    public virtual ICollection<Grupo> Grupos { get; } = new List<Grupo>();
 }

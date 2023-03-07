@@ -9,11 +9,17 @@ public partial class Disponibilidad
 
     public int IdDocente { get; set; }
 
-    public int IdPeriodo { get; set; }
+    public string Observacíon { get; set; } = null!;
 
-    public string Dia { get; set; } = null!;
+    public DateTime Fecha { get; set; }
+
+    public int Periodicidad { get; set; }
+
+    public string? Evidencia { get; set; }
+
+    public int Estado { get; set; }
+
+    public int TipoJustificación { get; set; }
 
     public virtual Docente IdDocenteNavigation { get; set; } = null!;
-
-    public virtual Periodo IdPeriodoNavigation { get; set; } = null!;
 }

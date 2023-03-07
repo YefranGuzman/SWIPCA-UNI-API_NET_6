@@ -5,23 +5,19 @@ namespace SWIPCA_UNI_API.Models;
 
 public partial class Docente
 {
-    public string? UsuarioCreacion { get; set; }
-
-    public DateTime? FechaCreacion { get; set; }
-
-    public string? UsuarioModificacion { get; set; }
-
-    public DateTime? FechaModificacion { get; set; }
-
     public int IdDocente { get; set; }
 
     public int IdUsuario { get; set; }
 
-    public int IdContrato { get; set; }
-
     public int IdDepartamento { get; set; }
 
-    public int Estado { get; set; }
+    public int Disponibilidad { get; set; }
+
+    public int TipoContrato { get; set; }
+
+    public int Derpartamento { get; set; }
+
+    public virtual ICollection<CargaAcademica> CargaAcademicas { get; } = new List<CargaAcademica>();
 
     public virtual ICollection<Clase> Clases { get; } = new List<Clase>();
 
@@ -29,7 +25,7 @@ public partial class Docente
 
     public virtual ICollection<Historial> Historials { get; } = new List<Historial>();
 
-    public virtual Contrato IdContratoNavigation { get; set; } = null!;
-
     public virtual Departamento IdDepartamentoNavigation { get; set; } = null!;
+
+    public virtual Contrato TipoContratoNavigation { get; set; } = null!;
 }

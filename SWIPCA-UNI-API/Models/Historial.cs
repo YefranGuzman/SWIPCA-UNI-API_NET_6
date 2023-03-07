@@ -5,21 +5,19 @@ namespace SWIPCA_UNI_API.Models;
 
 public partial class Historial
 {
-    public string? UsuarioCreacion { get; set; }
-
-    public DateTime? FechaCreacion { get; set; }
-
-    public string? UsuarioModificacion { get; set; }
-
-    public DateTime? FechaModificacion { get; set; }
-
     public int IdHistorial { get; set; }
 
     public int IdAsignatura { get; set; }
 
+    public int IdCarrera { get; set; }
+
     public int IdDocente { get; set; }
 
-    public int IdCarrera { get; set; }
+    public int Asignatura { get; set; }
+
+    public int Docente { get; set; }
+
+    public int Carrera { get; set; }
 
     public int Frecuencia { get; set; }
 

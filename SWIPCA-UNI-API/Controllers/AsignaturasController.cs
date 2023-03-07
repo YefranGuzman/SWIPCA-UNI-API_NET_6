@@ -22,7 +22,7 @@ namespace SWIPCA_UNI_API.Controllers
         public async Task <ActionResult> Put(int idAsignatura, [FromBody] Asignatura asignatura)
         {
             var Asignaturas = new DA_Asignatura();
-            asignatura.idAsignatura = idAsignatura;
+            asignatura.IdAsignatura = idAsignatura;
             await Asignaturas.ActualizarAsignatura(asignatura);
             return Ok(asignatura);
         }

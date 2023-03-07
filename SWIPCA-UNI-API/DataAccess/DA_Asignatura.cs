@@ -8,7 +8,6 @@ namespace SWIPCA_UNI_API.DataAccess
 {
     public class DA_Asignatura
     {
-        DB_Carga_Academica conexion = new DB_Carga_Academica();
         DbCargaAcademicaContext cn = new DbCargaAcademicaContext();
         public async Task<List<Asignatura>> ListarAsignaturas()
         {
