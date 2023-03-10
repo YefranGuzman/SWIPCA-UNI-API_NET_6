@@ -87,4 +87,19 @@ namespace SWIPCA_UNI_API.DataAccess
         }
         
     }
+    /*
+     El código define una clase DA_Docentes que tiene cuatro métodos asincrónicos 
+     para interactuar con una base de datos a través de Entity Framework Core.
+
+     Los cuatro métodos son ObtenerDocentes, ObtenerDisponibilidadDocente, ObtenerCargaDocentesLaboral 
+     y ObtenerAgendaDocente. Cada uno de estos métodos recibe uno o varios parámetros y devuelve una lista de cadenas de texto.
+
+    Cada método usa una o varias consultas LINQ para obtener datos de diferentes tablas de la base de datos, como 
+    Docentes, Departamentos, Usuarios, Disponibilidads, Clases, Asignaturas, Horarios, Grupos, Facultads y AulaLaboratorios.
+    Las consultas también incluyen cláusulas WHERE para filtrar los resultados según los parámetros proporcionados.
+
+    Una vez obtenidos los resultados de cada consulta, se concatenan las cadenas necesarias y se devuelven en una lista 
+    que se retorna como resultado de la función. En caso de no haber resultados, se devuelve una lista vacía o una lista 
+    con un único elemento que indica que no hay resultados.
+     */
 }

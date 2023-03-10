@@ -9,29 +9,37 @@ namespace SWIPCA_UNI_API.Controllers
     [Route("api/Docente")]
     public class DocentesController : Controller
     {
-        [HttpGet]
+        [HttpGet("{idDepartamento}/{idFacultad}")]
         public async Task<List<string>> GetObtenerDocentes(int idDepartamento, int IdFacultad)
         {
-            var ObtenerDocentes = new DA_Docentes();
-            var ListaDocentes = await ObtenerDocentes.ObtenerDocentes(idDepartamento,IdFacultad);
+            var GOD = new DA_Docentes();
+            var L_GOD = await GOD.ObtenerDocentes(idDepartamento,IdFacultad);
 
-            return ListaDocentes;
+            return L_GOD;
         }
-        [HttpGet]
+        [HttpGet("{idDepartamento}")]
         public async Task<List<string>> GetObtenerDisponibilidadDocente(int idDocente)
         {
-            var ObtenerDisponibilidadDocente = new DA_Docentes();
-            var ListaObtenerDisponibilidadDocente = await ObtenerDisponibilidadDocente.ObtenerDisponibilidadDocente(idDocente);
+            var GODD = new DA_Docentes();
+            var L_GODD = await GODD.ObtenerDisponibilidadDocente(idDocente);
 
-            return ListaObtenerDisponibilidadDocente;
+            return L_GODD;
         }
-        [HttpGet]
+        [HttpGet("{idDepartamento}")]
         public async Task<List<string>> GetObtenerCargaDocentesLaboral (int idDocente)
         {
-            var ObtenerCargaDocentes = new DA_Docentes();
-            var ListaObtenerCargaDocentes = await ObtenerCargaDocentes.ObtenerCargaDocentes(idDocente);
+            var GOCD = new DA_Docentes();
+            var L_GOCD = await GOCD.ObtenerCargaDocentesLaboral(idDocente);
 
-            return ListaObtenerCargaDocentes;
+            return L_GOCD;
+        }
+        [HttpGet("{idDepartamento}")]
+        public async Task<List<string>> GetObtenerAgendaDocente (int idDocente)
+        {
+            var GTAD = new DA_Docentes();
+            var L_GTAD = await GTAD.ObtenerAgendaDocente(idDocente);
+
+            return L_GTAD;
         }
     }
 }
