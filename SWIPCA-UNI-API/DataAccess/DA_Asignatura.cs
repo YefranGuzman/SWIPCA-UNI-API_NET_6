@@ -1,48 +1,39 @@
 ﻿using System.Data;
 using SWIPCA_UNI_API.Models;
 using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.Arm;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
     public class DA_Asignatura
     {
-        DB_Carga_Academica conexion = new DB_Carga_Academica();
-        public async Task<List<Asignatura>> ListarAsignaturas() { 
-            var ListAsignatura = new List<Asignatura>();
-            using(var sentenciasql = new SqlConnection(conexion.ConexionSQL()))
-            {
-                using (var consulta = new SqlCommand("sp_ListarAsignaturas", sentenciasql))
+        DbCargaAcademicaContext cn = new DbCargaAcademicaContext();
+        public async Task<List<Asignatura>> ListarAsignaturas()
+        {
+            var listaAsignaturas = await cn.Asignaturas
+                .Select(a => new Asignatura
                 {
-                    await sentenciasql.OpenAsync();
-                    consulta.CommandType = CommandType.StoredProcedure;
+                    IdAsignatura = a.IdAsignatura,
+                    Nombre = a.Nombre,
+                    Frecuencia = a.Frecuencia
+                })
+                .ToListAsync();
 
-                    using(var item = await consulta.ExecuteReaderAsync())
-                    {
-                        while (await item.ReadAsync())
-                        {
-                            var Asignatura = new Asignatura();
-                            Asignatura.idAsignatura = (int)item["Identificador"];
-                            Asignatura.nombre = (string)item["Nombre"];
-                            Asignatura.frecuencia = (int)item["FrecuenciaAsignatura"];
-                            ListAsignatura.Add(Asignatura);
-                        }
-                    }
-                }
-
-                return ListAsignatura;
-            }
+            return listaAsignaturas;
         }
-        public async Task ActualizarAsignatura(Asignatura ModelAsignatura) {
-            using (var sentenciasql = new SqlConnection(conexion.ConexionSQL()))
+        public async Task ActualizarAsignatura(Asignatura ModelAsignatura)
+        {
+            var asignatura = await cn.Asignaturas.FindAsync(ModelAsignatura.IdAsignatura);
+            if (asignatura == null)
             {
-                using (var consulta = new SqlCommand("sp_ActualizarAsignaturas", sentenciasql))
-                {
-                    consulta.CommandType= CommandType.StoredProcedure;
-                    consulta.Parameters.AddWithValue("@idAsignatura", ModelAsignatura.idAsignatura);
-                    await sentenciasql.OpenAsync();
-                    await consulta.ExecuteNonQueryAsync();
-                }
+                throw new Exception("Asignatura no encontrada");
             }
+
+            asignatura.Nombre = ModelAsignatura.Nombre;
+            asignatura.Frecuencia = ModelAsignatura.Frecuencia;
+
+            await cn.SaveChangesAsync();
         }
     }
 }
