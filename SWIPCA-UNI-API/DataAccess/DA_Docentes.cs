@@ -53,5 +53,38 @@ namespace SWIPCA_UNI_API.DataAccess
                 ).ToListAsync();
             return ListaOCB;
         }
+
+        public async Task<List<string>> ObtenerAgendaDocente(int IdDocente)
+        {
+            var AgendaDocenteClases = await (from DC in db.Docentes
+                                             join CS in db.Clases
+                                             on DC.IdDocente equals CS.IdDocente
+                                             join AA in db.Asignaturas
+                                             on CS.IdAsignatura equals AA.IdAsignatura
+                                             join HS in db.Horarios
+                                             on CS.IdClase equals HS.IdClase
+                                             join GT in db.Grupos
+                                             on HS.IdGrupo equals GT.IdGrupo
+                                             join DP in db.Departamentos
+                                             on DC.IdDepartamento equals DP.IdDepartamento
+                                             join FT in db.Facultads
+                                             on DP.IdFacultad equals FT.IdFacultad
+                                             join AU in db.AulaLaboratorios
+                                             on FT.IdFacultad equals AU.IdFacultad
+                                             join DIS in db.Disponibilidads
+                                             on DC.IdDocente equals DIS.IdDocente
+                                             where DC.IdDocente == IdDocente
+                                             select $"{DIS.Fecha}{DIS.Observacíon}"
+                                        ).ToListAsync();
+            if (AgendaDocenteClases.Any())
+            {
+                return AgendaDocenteClases.ToList();
+            }
+            else
+            {
+                return new List<string>() { "No hay fechas u observaciones en la agenda del docente." };
+            }
+        }
+        
     }
 }
