@@ -9,36 +9,37 @@ namespace SWIPCA_UNI_API.Controllers
     [Route("api/Docente")]
     public class DocentesController : Controller
     {
-        [HttpGet]
+        [HttpGet("{idDepartamento}/{idFacultad}")]
         public async Task<List<string>> GetObtenerDocentes(int idDepartamento, int IdFacultad)
         {
             var GOD = new DA_Docentes();
-            var LGOD = await GOD.ObtenerDocentes(idDepartamento,IdFacultad);
+            var L_GOD = await GOD.ObtenerDocentes(idDepartamento,IdFacultad);
 
-            return LGOD;
+            return L_GOD;
         }
-        [HttpGet]
+        [HttpGet("{idDepartamento}")]
         public async Task<List<string>> GetObtenerDisponibilidadDocente(int idDocente)
         {
             var GODD = new DA_Docentes();
-            var LGODD = await GODD.ObtenerDisponibilidadDocente(idDocente);
+            var L_GODD = await GODD.ObtenerDisponibilidadDocente(idDocente);
 
-            return LGODD;
+            return L_GODD;
         }
-        [HttpGet]
+        [HttpGet("{idDepartamento}")]
         public async Task<List<string>> GetObtenerCargaDocentesLaboral (int idDocente)
         {
             var GOCD = new DA_Docentes();
-            var LGOCD = await GOCD.ObtenerCargaDocentesLaboral(idDocente);
+            var L_GOCD = await GOCD.ObtenerCargaDocentesLaboral(idDocente);
 
-            return LGOCD;
+            return L_GOCD;
         }
+        [HttpGet("{idDepartamento}")]
         public async Task<List<string>> GetObtenerAgendaDocente (int idDocente)
         {
             var GTAD = new DA_Docentes();
-            var LGTAD = await GTAD.ObtenerAgendaDocente(idDocente);
+            var L_GTAD = await GTAD.ObtenerAgendaDocente(idDocente);
 
-            return LGTAD;
+            return L_GTAD;
         }
     }
 }
