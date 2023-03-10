@@ -17,7 +17,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                        on a.IdUsuario equals c.IdUsuario
                                        join f in db.Facultads
                                        on b.IdFacultad equals f.IdFacultad
-                                       where a.Estado == 1 && b.IdDepartamento == idDepartamento && b.IdFacultad == idFacultad
+                                       where b.IdDepartamento == idDepartamento && b.IdFacultad == idFacultad
                                        select c.PrimerNombre + " " + c.SegundoNombre + " " + c.PrimerApellido + " " + c.SegundoApellido).ToListAsync();
             return listaDocentes;
         }
@@ -28,9 +28,30 @@ namespace SWIPCA_UNI_API.DataAccess
                                               join b in db.Docentes
                                               on a.IdDocente equals b.IdDocente
                                               where a.IdDocente == idDocente
-                                              select a.Dia).ToListAsync();
+                                              select a.Fecha + " " + a.TipoJustificación + " " + a.Periodicidad + " " + a.Observacíon + " " + a.Evidencia).ToListAsync();
             return listarDisponibilidad;
         }
-
+        public async Task<List<string>> ObtenerCargaDocentesLaboral(int IdDocente)
+        {
+            var ListaOCB = await (from DC in db.Docentes
+                                          join CS in db.Clases
+                                          on DC.IdDocente equals CS.IdDocente
+                                          join AA in db.Asignaturas
+                                          on CS.IdAsignatura equals AA.IdAsignatura
+                                          join HS in db.Horarios
+                                          on CS.IdClase equals HS.IdClase
+                                          join GT in db.Grupos
+                                          on HS.IdGrupo equals GT.IdGrupo
+                                          join DP in db.Departamentos
+                                          on DC.IdDepartamento equals DP.IdDepartamento
+                                          join FT in db.Facultads
+                                          on DP.IdFacultad equals FT.IdFacultad
+                                          join AU in db.AulaLaboratorios
+                                          on FT.IdFacultad equals AU.IdFacultad
+                                          where DC.IdDocente == IdDocente && CS.Dia == DateTime.Today.ToString()
+                                          select AA.Nombre + " " + CS.Dia + " " + GT.Nombre + " " + AU.Nombre + " " + CS.HoraInicio
+                ).ToListAsync();
+            return ListaOCB;
+        }
     }
 }
