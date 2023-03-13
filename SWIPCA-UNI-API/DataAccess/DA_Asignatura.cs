@@ -35,5 +35,23 @@ namespace SWIPCA_UNI_API.DataAccess
 
             await cn.SaveChangesAsync();
         }
+        public async Task<List<string>> ListarAsignaturasPorDepartamento(int idDepartamento)
+        {
+            var ListAsignatura_Dpto = await(from AA in cn.Asignaturas
+                                                    join PM in cn.Pensums
+                                                    on AA.IdAsignatura equals PM.IdAsignatura
+                                                    join CR in cn.Carreras
+                                                    on PM.IdCarrera equals CR.IdCarrera
+                                                    join FT in cn.Facultads
+                                                    on CR.IdFacultad equals FT.IdFacultad
+                                                    join DP in cn.Departamentos
+                                                    on FT.IdFacultad equals DP.IdFacultad
+                                                    join DR in cn.Duraccions
+                                                    on PM.IdDuraccion equals DR.IdDuraccion
+                                            where DP.IdDepartamento == idDepartamento
+                                            select $"{AA.Nombre}{DR.Anio}{AA.Frecuencia}"
+                                                    ).ToListAsync();
+            return ListAsignatura_Dpto;
+        }
     }
 }

@@ -8,10 +8,10 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Aula
     {
         DbCargaAcademicaContext cn = new DbCargaAcademicaContext();
-        public async Task<List<Aula>> ListarAula()
+        public async Task<List<AulaLaboratorio>> ListarAula()
         {
-            var listAula = await cn.Aulas.ToListAsync();
-            return listAula;
+            var listAula = await cn.AulaLaboratorios.ToListAsync();
+            return listAula.ToList();
         }
     }
 }
