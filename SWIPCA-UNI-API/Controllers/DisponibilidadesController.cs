@@ -2,19 +2,27 @@
 using Microsoft.AspNetCore.Mvc;
 using SWIPCA_UNI_API.DataAccess;
 using SWIPCA_UNI_API.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SWIPCA_UNI_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DisponibilidadesController : Controller
+    public class DisponibilidadesController : ControllerBase
     {
-        [HttpPut("{IdDocente}{Observacion}{Periodo}{Evidencia}{Estado}{TipoJustificacion" +
-            "}")]
-        public async Task<IActionResult> PUTGuardarDisponibilidadDocente(int IdDocente, string Observacion, int Periodo, string Evidencia, int Estado, int TipoJustificacion)
+        private readonly DA_Disponibilidad _daDisponibilidad;
+
+        public DisponibilidadesController(DA_Disponibilidad daDisponibilidad)
         {
-            var DA_GuardarDisponibilidadDocente = new DA_Disponibilidad();
-            var result = await DA_GuardarDisponibilidadDocente.GuardarDisponibilidadDocente(IdDocente, Observacion, Periodo, Evidencia, Estado, TipoJustificacion);
+            _daDisponibilidad = daDisponibilidad;
+        }
+
+        [HttpPut("{idDocente}/{observacion}/{periodo}/{evidencia}/{estado}/{tipoJustificacion}")]
+        public async Task<IActionResult> PutGuardarDisponibilidadDocente(int idDocente, string observacion, int periodo, string evidencia, int estado, int tipoJustificacion)
+        {
+            var result = await _daDisponibilidad.GuardarDisponibilidadDocente(idDocente, observacion, periodo, evidencia, estado, tipoJustificacion);
 
             if (result == "El Id del docente no puede venir vacio")
             {
@@ -29,17 +37,16 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Error al guardar la disponibilidad");
             }
         }
-        [HttpGet("{idDocente}")]
-        public async Task<ActionResult<List<Disponibilidad>>> GETObtenerDisponibilidadesPorEstado(int idDocente)
+
+        [HttpGet("docente/{idDocente}")]
+        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidadesPorEstado(int idDocente)
         {
             if (idDocente <= 0)
             {
                 return BadRequest("El id del docente no es válido.");
             }
 
-            var ObtenerDisponibilidadesPorEstado = new DA_Disponibilidad();
-
-            var result = await ObtenerDisponibilidadesPorEstado.ObtenerDisponibilidadesPorEstado(idDocente);
+            var result = await _daDisponibilidad.ObtenerDisponibilidadesPorEstado(idDocente);
 
             if (result == null || !result.Any())
             {
@@ -49,21 +56,19 @@ namespace SWIPCA_UNI_API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{idDocente}")]
-        public async Task<ActionResult<List<Disponibilidad>>> ObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDocente)
+        [HttpGet("departamento/{idDepartamento}")]
+        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDepartamento)
         {
-            if (idDocente <= 0)
+            if (idDepartamento <= 0)
             {
-                return BadRequest("El id del docente no es válido.");
+                return BadRequest("El id del departamento no es válido.");
             }
 
-            var ObtenerDisponibilidadesTodosDocentesPorDepartamento = new DA_Disponibilidad();
-
-            var result = await ObtenerDisponibilidadesTodosDocentesPorDepartamento.ObtenerDisponibilidadesTodosDocentesPorDepartamento(idDocente);
+            var result = await _daDisponibilidad.ObtenerDisponibilidadesTodosDocentesPorDepartamento(idDepartamento);
 
             if (result == null || !result.Any())
             {
-                return NotFound("No se encontraron disponibilidades para los docente.");
+                return NotFound("No se encontraron disponibilidades para los docentes del departamento especificado.");
             }
 
             return Ok(result);
