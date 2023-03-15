@@ -20,7 +20,7 @@ namespace SWIPCA_UNI_API.Controllers
             _jwtService = jwtService;
         }
 
-        [HttpPost]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
             var usuario = await _daUsuario.ObtenerPorNick(model.Nick);
