@@ -10,7 +10,7 @@ namespace SWIPCA_UNI_API.Controllers
     public class AsignaturasController : Controller
     {
         [HttpGet]
-        public async Task <ActionResult<List<Asignatura>>> Get()
+        public async Task <ActionResult<List<Asignatura>>> GetAsignaturas()
         {
             var Asignaturas = new DA_Asignatura();
             var ListaAsignatura = await Asignaturas.ListarAsignaturas();  
@@ -19,7 +19,7 @@ namespace SWIPCA_UNI_API.Controllers
         }
         
         [HttpPut("{idAsignatura}")]
-        public async Task <ActionResult> Put(int idAsignatura, [FromBody] Asignatura asignatura)
+        public async Task <ActionResult> PutAsignatura(int idAsignatura, [FromBody] Asignatura asignatura)
         {
             var Asignaturas = new DA_Asignatura();
             asignatura.IdAsignatura = idAsignatura;
