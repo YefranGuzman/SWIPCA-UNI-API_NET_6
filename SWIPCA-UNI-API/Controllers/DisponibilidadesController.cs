@@ -5,6 +5,8 @@ using SWIPCA_UNI_API.Models;
 
 namespace SWIPCA_UNI_API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class DisponibilidadesController : Controller
     {
         [HttpPut("{IdDocente}{Observacion}{Periodo}{Evidencia}{Estado}{TipoJustificacion" +

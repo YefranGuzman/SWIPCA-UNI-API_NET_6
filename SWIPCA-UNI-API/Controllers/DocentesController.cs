@@ -5,8 +5,8 @@ using SWIPCA_UNI_API.Models;
 
 namespace SWIPCA_UNI_API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/Docente")]
     public class DocentesController : Controller
     {
         [HttpGet("{idDepartamento}/{idFacultad}")]

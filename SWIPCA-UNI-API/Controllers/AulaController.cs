@@ -4,8 +4,8 @@ using SWIPCA_UNI_API.DataAccess;
 
 namespace SWIPCA_UNI_API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/AulaLaboratorio")]
     public class AulaController : Controller
     {
         [HttpGet]

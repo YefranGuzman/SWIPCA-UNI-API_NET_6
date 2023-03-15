@@ -4,6 +4,8 @@ using SWIPCA_UNI_API.Models;
 
 namespace SWIPCA_UNI_API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class GrupoController : Controller
     {
         [HttpGet]
