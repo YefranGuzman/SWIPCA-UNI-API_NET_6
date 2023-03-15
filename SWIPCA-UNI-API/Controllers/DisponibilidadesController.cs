@@ -7,7 +7,8 @@ namespace SWIPCA_UNI_API.Controllers
 {
     public class DisponibilidadesController : Controller
     {
-        [HttpPut]
+        [HttpPut("{IdDocente}{Observacion}{Periodo}{Evidencia}{Estado}{TipoJustificacion" +
+            "}")]
         public async Task<IActionResult> PUTGuardarDisponibilidadDocente(int IdDocente, string Observacion, int Periodo, string Evidencia, int Estado, int TipoJustificacion)
         {
             var DA_GuardarDisponibilidadDocente = new DA_Disponibilidad();
@@ -27,20 +28,43 @@ namespace SWIPCA_UNI_API.Controllers
             }
         }
         [HttpGet("{idDocente}")]
-        public async Task<List<Disponibilidad>> GETObtenerDisponibilidadesPorEstado(int idDocente)
+        public async Task<ActionResult<List<Disponibilidad>>> GETObtenerDisponibilidadesPorEstado(int idDocente)
         {
+            if (idDocente <= 0)
+            {
+                return BadRequest("El id del docente no es válido.");
+            }
+
             var ObtenerDisponibilidadesPorEstado = new DA_Disponibilidad();
 
             var result = await ObtenerDisponibilidadesPorEstado.ObtenerDisponibilidadesPorEstado(idDocente);
 
-            return result;
+            if (result == null || !result.Any())
+            {
+                return NotFound("No se encontraron disponibilidades para el docente especificado.");
+            }
+
+            return Ok(result);
         }
+
         [HttpGet("{idDocente}")]
-        public async Task<List<Disponibilidad>> ObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDocente)
+        public async Task<ActionResult<List<Disponibilidad>>> ObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDocente)
         {
+            if (idDocente <= 0)
+            {
+                return BadRequest("El id del docente no es válido.");
+            }
+
             var ObtenerDisponibilidadesTodosDocentesPorDepartamento = new DA_Disponibilidad();
 
             var result = await ObtenerDisponibilidadesTodosDocentesPorDepartamento.ObtenerDisponibilidadesTodosDocentesPorDepartamento(idDocente);
+
+            if (result == null || !result.Any())
+            {
+                return NotFound("No se encontraron disponibilidades para los docente.");
+            }
+
+            return Ok(result);
 
             return result;
         }
