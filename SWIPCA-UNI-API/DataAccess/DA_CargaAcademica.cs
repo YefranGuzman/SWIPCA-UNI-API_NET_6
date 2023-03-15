@@ -1,8 +1,6 @@
 ﻿using System.Data;
 using SWIPCA_UNI_API.Models;
-using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Intrinsics.Arm;
 
 namespace SWIPCA_UNI_API.DataAccess
 {

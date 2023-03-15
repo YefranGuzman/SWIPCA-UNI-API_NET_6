@@ -6,7 +6,6 @@ namespace SWIPCA_UNI_API.Controllers
 {
     [ApiController]
     [Route("api/Asignatura")]
-   
     public class AsignaturasController : Controller
     {
         [HttpGet]
@@ -17,7 +16,6 @@ namespace SWIPCA_UNI_API.Controllers
 
             return (ListaAsignatura);
         }
-        
         [HttpPut("{idAsignatura}")]
         public async Task <ActionResult> PutAsignatura(int idAsignatura, [FromBody] Asignatura asignatura)
         {
@@ -26,8 +24,5 @@ namespace SWIPCA_UNI_API.Controllers
             await Asignaturas.ActualizarAsignatura(asignatura);
             return Ok(asignatura);
         }
-
     }
-
-    
 }

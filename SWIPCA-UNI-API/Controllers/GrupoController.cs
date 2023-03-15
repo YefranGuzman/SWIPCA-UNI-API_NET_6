@@ -7,10 +7,10 @@ namespace SWIPCA_UNI_API.Controllers
     public class GrupoController : Controller
     {
         [HttpGet]
-        public ActionResult<List<Grupo>> GetObtenerGrupo()
+        public async Task<ActionResult<List<Grupo>>> GetObtenerGrupo()
         {
             var DA_Grupos = new DA_Grupo();
-            var result = DA_Grupos.ObtenerGrupo();
+            var result = await DA_Grupos.ObtenerGrupo();
 
             return Ok(result);
         }
