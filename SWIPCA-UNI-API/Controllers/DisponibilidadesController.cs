@@ -65,8 +65,6 @@ namespace SWIPCA_UNI_API.Controllers
             }
 
             return Ok(result);
-
-            return result;
         }
     }
 }
