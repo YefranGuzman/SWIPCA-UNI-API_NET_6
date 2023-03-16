@@ -16,11 +16,13 @@ namespace SWIPCA_UNI_API.Controllers
 
             return Asignaturas;
         }
-        [HttpGet("IdDocente")]
-        public async Task<List<AulaLaboratorio>> GetListarAulaPorFacultad(int IdDocente) { 
+        [HttpGet("{IdDocente}")]
+        public async Task<List<AulaLaboratorio>> GetListarAulaPorFacultad(int IdDocente)
+        {
             var list = new DA_Aula();
             var Asignatura = await list.ListarAulaPorFacultad(IdDocente);
             return Asignatura;
         }
+
     }
 }

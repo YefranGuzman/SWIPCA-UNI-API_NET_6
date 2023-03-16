@@ -6,7 +6,7 @@ namespace SWIPCA_UNI_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GrupoController : Controller
+    public class GrupoController : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<List<Grupo>>> GetObtenerGrupo()
