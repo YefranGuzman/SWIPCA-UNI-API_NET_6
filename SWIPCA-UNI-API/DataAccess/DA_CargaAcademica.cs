@@ -8,7 +8,7 @@ namespace SWIPCA_UNI_API.DataAccess
     {
         DbCargaAcademicaContext db = new();
 
-        public async Task<List<string>> ObtenerCargaAcademicaDocente(int IdDocente, int IdDepartameto)
+        public async Task<List<string>> ObtenerCargaAcademicaDocente(int IdDocente, int IdDepartamento)
         {
             var result = new List<string>();
 
@@ -25,7 +25,7 @@ namespace SWIPCA_UNI_API.DataAccess
                 .Select(x => x.CargaAcademicas.IdCaHo)
                 .FirstOrDefaultAsync();
 
-            if (idCargaAcademica > 0 && IdDepartameto > 0)
+            if (idCargaAcademica > 0 && IdDepartamento > 0)
             {
                 var cargaTurno = await (from A in db.CargaAcademicas
                                          join B in db.Grupos
@@ -52,7 +52,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                         on B.IdFacultad equals C.IdFacultad
                                         join D in db.Docentes
                                         on C.IdDepartamento equals D.IdDepartamento
-                                        where C.IdDepartamento == IdDepartameto && D.IdDocente == IdDocente
+                                        where C.IdDepartamento == IdDepartamento && D.IdDocente == IdDocente
                                         select A.IdAuLa
                                         ).ToListAsync();
 
