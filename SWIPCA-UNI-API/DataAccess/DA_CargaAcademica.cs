@@ -25,7 +25,7 @@ namespace SWIPCA_UNI_API.DataAccess
                 .Select(x => x.CargaAcademicas.IdCaHo)
                 .FirstOrDefaultAsync();
 
-            if (idCargaAcademica != null && IdDepartameto != null)
+            if (idCargaAcademica > 0 && IdDepartameto > 0)
             {
                 var cargaTurno = await (from A in db.CargaAcademicas
                                          join B in db.Grupos

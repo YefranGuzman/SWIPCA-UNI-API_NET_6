@@ -14,7 +14,12 @@ namespace SWIPCA_UNI_API.DataAccess
 
         public async Task<Usuario> ObtenerPorNick(string Nick)
         {
-            return await cn.Usuarios.SingleOrDefaultAsync(x => x.Nick == Nick);
+            var usuario = await cn.Usuarios.SingleOrDefaultAsync(x => x.Nick == Nick);
+            if (usuario == null)
+            {
+                throw new Exception("No se encontró ningún usuario con ese Nick.");
+            }
+            return usuario;
         }
 
         public bool VerificarContrasena(Usuario usuario, string contrasena)
@@ -56,8 +61,8 @@ namespace SWIPCA_UNI_API.DataAccess
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
             }
-        }
 
+        }
 
     }
 }
