@@ -4,30 +4,25 @@ using SWIPCA_UNI_API.DataAccess;
 
 namespace SWIPCA_UNI_API.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/Asignatura")]
-   
     public class AsignaturasController : Controller
     {
-        [HttpGet(Name = "ObtenerListaAsignaturas")]
-        public async Task <ActionResult<List<Asignatura>>> Get()
+        [HttpGet]
+        public async Task <ActionResult<List<Asignatura>>> GetAsignaturas()
         {
             var Asignaturas = new DA_Asignatura();
-            var Lista = await Asignaturas.ListarAsignaturas();  
+            var ListaAsignatura = await Asignaturas.ListarAsignaturas();  
 
-            return (Lista);
+            return (ListaAsignatura);
         }
-        
         [HttpPut("{idAsignatura}")]
-        public async Task <ActionResult> Put(int idAsignatura, [FromBody] Asignatura asignatura)
+        public async Task <ActionResult> PutAsignatura(int idAsignatura, [FromBody] Asignatura asignatura)
         {
             var Asignaturas = new DA_Asignatura();
-            asignatura.idAsignatura = idAsignatura;
+            asignatura.IdAsignatura = idAsignatura;
             await Asignaturas.ActualizarAsignatura(asignatura);
             return Ok(asignatura);
         }
-
     }
-
-    
 }
