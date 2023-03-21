@@ -135,6 +135,9 @@ public partial class DbCargaAcademicaContext : DbContext
             entity.Property(e => e.IdDocente).HasColumnName("idDocente");
             entity.Property(e => e.IdGrupo).HasColumnName("idGrupo");
             entity.Property(e => e.IdJefe).HasColumnName("idJefe");
+            entity.Property(e => e.Observacion)
+                .HasMaxLength(150)
+                .IsUnicode(false);
 
             entity.HasOne(d => d.IdCarreraNavigation).WithMany(p => p.CargaAcademicas)
                 .HasForeignKey(d => d.IdCarrera)

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using SWIPCA_UNI_API.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
@@ -8,72 +9,48 @@ namespace SWIPCA_UNI_API.DataAccess
     {
         DbCargaAcademicaContext db = new();
 
-        public async Task<List<string>> ObtenerCargaAcademicaDocente(int IdDocente, int IdDepartamento)
+        public async Task<List<string>> ObtenerCargaAcademicaDocente(int IdDocente)
         {
-            var result = new List<string>();
-
-            var idCargaAcademica = await db.CargaAcademicas
-                .Join(db.Docentes,
-                jefe => jefe.IdJefe,
-                docente => docente.IdDocente,
-                (jefe, docente) => new
-                {
-                    CargaAcademicas = jefe,
-                    Docentes = docente
-                })
-                .Where(x => x.Docentes.IdDocente == IdDocente)
-                .Select(x => x.CargaAcademicas.IdCaHo)
-                .FirstOrDefaultAsync();
-
-            if (idCargaAcademica > 0 && IdDepartamento > 0)
-            {
-                var cargaTurno = await (from A in db.CargaAcademicas
-                                         join B in db.Grupos
-                                         on A.IdGrupo equals B.IdGrupo
-                                         where A.IdCaHo == idCargaAcademica
-                                         select B.Turno).ToListAsync();
-
-                result.AddRange((IEnumerable<string>)cargaTurno);
-
-                var cargaClases = await (from A in db.CargaAcademicas
-                                         join B in db.Clases
-                                         on A.IdClase equals B.IdClase
-                                         join C in db.Asignaturas
-                                         on B.IdAsignatura equals C.IdAsignatura
-                                         where A.IdCaHo == idCargaAcademica
-                                         select C.Nombre).ToListAsync();
-
-                result.AddRange(cargaClases);
-
-                var cargaAulas = await (from A in db.AulaLaboratorios
-                                        join B in db.Facultads
-                                        on A.IdFacultad equals B.IdFacultad
-                                        join C in db.Departamentos
-                                        on B.IdFacultad equals C.IdFacultad
-                                        join D in db.Docentes
-                                        on C.IdDepartamento equals D.IdDepartamento
-                                        where C.IdDepartamento == IdDepartamento && D.IdDocente == IdDocente
-                                        select A.IdAuLa
+            var CargaAcademica1 = await (from carga in db.CargaAcademicas
+                                        join docente in db.Docentes
+                                        on carga.IdDocente equals docente.IdDocente
+                                        join clase in db.Clases
+                                        on carga.IdClase equals clase.IdClase
+                                        join grupo in db.Grupos
+                                        on carga.IdGrupo equals grupo.IdGrupo
+                                        join asignatura in db.Asignaturas
+                                        on clase.IdAsignatura equals asignatura.IdAsignatura
+                                        join carrera in db.Carreras
+                                        on carga.IdCarrera equals carrera.IdCarrera
+                                        join facultad in db.Facultads
+                                        on carrera.IdFacultad equals facultad.IdFacultad
+                                        join Aula_Lab in db.AulaLaboratorios
+                                        on facultad.IdFacultad equals Aula_Lab.IdFacultad
+                                        where carga.IdDocente == IdDocente && carga.Estado == 0
+                                        select $"{carga.IdCaHo}{asignatura.Nombre}{Aula_Lab.Nombre}{grupo.Nombre}"
                                         ).ToListAsync();
 
-                var cargaGrupos = await (from A in db.CargaAcademicas
-                                        join B in db.Grupos
-                                        on A.IdGrupo equals B.IdGrupo
-                                        where A.IdCaHo == idCargaAcademica
-                                        select B.Nombre).ToListAsync();
+            var CargaAcademica2 = await (from carga in db.CargaAcademicas
+                                   join docente in db.Docentes
+                                   on carga.IdDocente equals docente.IdDocente
+                                   join clase in db.Clases
+                                   on carga.IdClase equals clase.IdClase
+                                   join grupo in db.Grupos
+                                   on carga.IdGrupo equals grupo.IdGrupo
+                                   join asignatura in db.Asignaturas
+                                   on clase.IdAsignatura equals asignatura.IdAsignatura
+                                   join carrera in db.Carreras
+                                   on carga.IdCarrera equals carrera.IdCarrera
+                                   join facultad in db.Facultads
+                                   on carrera.IdFacultad equals facultad.IdFacultad
+                                   join Aula_Lab in db.AulaLaboratorios
+                                   on facultad.IdFacultad equals Aula_Lab.IdFacultad
+                                   where carga.IdDocente == IdDocente && carga.Estado == 0
+                                   select $"{carga.Observacion}{asignatura.Frecuencia}").ToListAsync();
 
-                result.AddRange(cargaGrupos);
+            var CargaAcademica = CargaAcademica1.Concat(CargaAcademica2).ToList();
 
-                var cargaFrecuencia = await (from A in db.CargaAcademicas
-                                         join B in db.Clases
-                                         on A.IdClase equals B.IdClase
-                                         where A.IdCaHo == idCargaAcademica
-                                         select B.Dia).ToListAsync();
-
-                result.AddRange(cargaFrecuencia);
-
-            }
-            return result;
+            return CargaAcademica;
         }
     }
 }
