@@ -9,6 +9,33 @@ namespace SWIPCA_UNI_API.DataAccess
     {
         DbCargaAcademicaContext db = new();
 
+        public async Task AgregarCargaAcademica(CargaAcademica cargaAcademica)
+        {
+            if (db.CargaAcademicas.Any(c => c.IdCarrera == cargaAcademica.IdCarrera && c.IdClase == cargaAcademica.IdClase && c.IdGrupo == cargaAcademica.IdGrupo && c.IdDocente == cargaAcademica.IdDocente))
+            {
+                throw new Exception("Ya existe una carga académica con los mismos valores de IdCarrera, IdClase, IdGrupo e IdDocente.");
+            }
+
+            db.CargaAcademicas.Add(cargaAcademica);
+            await db.SaveChangesAsync();
+        }
+        public async Task CambiarEstadoCargaAcademica(int idCargaAcademica)
+        {
+            var cargaAcademica = await db.CargaAcademicas.FindAsync(idCargaAcademica);
+
+            if (cargaAcademica == null)
+            {
+                throw new ArgumentException("La carga académica no existe");
+            }
+
+            if (cargaAcademica.Estado != 0)
+            {
+                throw new InvalidOperationException("La carga académica ya ha sido aprobada o rechazada");
+            }
+
+            cargaAcademica.Estado = 1;
+            await db.SaveChangesAsync();
+        }
         public async Task<List<string>> ObtenerCargaAcademicaDocente(int IdDocente)
         {
             var CargaAcademica1 = await (from carga in db.CargaAcademicas
