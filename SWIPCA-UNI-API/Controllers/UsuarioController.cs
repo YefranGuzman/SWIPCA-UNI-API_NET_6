@@ -15,7 +15,6 @@ namespace SWIPCA_UNI_API.Controllers
         private readonly DA_Usuario.JwtService _jwtService;
         private readonly UserManager<Usuario> _userManager;
         private readonly IConfiguration _config;
-
         public Usuario(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Usuario> userManager, IConfiguration config)
         {
             _daUsuario = daUsuario;
@@ -23,7 +22,6 @@ namespace SWIPCA_UNI_API.Controllers
             _userManager = userManager;
             _config = config;
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
