@@ -36,9 +36,9 @@ namespace SWIPCA_UNI_API.DataAccess
             cargaAcademica.Estado = 1;
             await db.SaveChangesAsync();
         }
-        public async Task<List<string>> ObtenerCargaAcademicaDocente(int IdDocente)
+        public async Task<List<string[]>> ObtenerCargaAcademicaDocente(int IdDocente)
         {
-            var turnos = await db.Turnos.ToListAsync(); // Obtener la lista de turnos
+            var turnos = await db.Turnos.ToListAsync(); // Obtener la lista de turnos generalizados
 
             var PRECargaAcademica = await (from carga in db.CargaAcademicas
                                            join docente in db.Docentes
@@ -56,11 +56,19 @@ namespace SWIPCA_UNI_API.DataAccess
                                            join Aula_Lab in db.AulaLaboratorios
                                            on facultad.IdFacultad equals Aula_Lab.IdFacultad
                                            where carga.IdDocente == IdDocente && carga.Estado == 0
-                                           select $"{carga.IdCaHo}{asignatura.Nombre}{Aula_Lab.Nombre}{grupo.Nombre}{turnos.Single(t => t.IdTurno == grupo.IdTurno).Nombre}{carga.Observacion}{asignatura.Frecuencia}"
+                                           select $"{carga.IdCaHo}{{{asignatura.Nombre}}}{{{Aula_Lab.Nombre}}}{{{grupo.Nombre}}}{{{turnos.Single(t => t.IdTurno == grupo.IdTurno).Nombre}}}{{{carga.Observacion}}}{{{asignatura.Frecuencia}}}"
                                             ).ToListAsync();
 
-            return PRECargaAcademica;
+            var cargaAcademicaList = new List<string[]>();
+            foreach (var cargaAcademica in PRECargaAcademica)
+            {
+                var cargaAcademicaArray = cargaAcademica.Split('{').Select(c => c.TrimEnd('}')).ToArray();
+                cargaAcademicaList.Add(cargaAcademicaArray);
+            }
+
+            return cargaAcademicaList;
         }
+
         public async Task GuardarCargaAcademica(CargaAcademica cargaAcademica)
         {
             if (cargaAcademica.IdCarrera == 0 ||
