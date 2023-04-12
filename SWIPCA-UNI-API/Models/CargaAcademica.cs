@@ -19,6 +19,8 @@ public partial class CargaAcademica
 
     public int Estado { get; set; }
 
+    public string? Observacion { get; set; }
+
     public virtual Carrera IdCarreraNavigation { get; set; } = null!;
 
     public virtual Clase IdClaseNavigation { get; set; } = null!;

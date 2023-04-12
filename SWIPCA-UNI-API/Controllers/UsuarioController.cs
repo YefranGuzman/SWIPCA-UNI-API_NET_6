@@ -15,8 +15,6 @@ namespace SWIPCA_UNI_API.Controllers
         private readonly DA_Usuario.JwtService _jwtService;
         private readonly UserManager<Usuario> _userManager;
         private readonly IConfiguration _config;
-
-
         public Usuario(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Usuario> userManager, IConfiguration config)
         {
             _daUsuario = daUsuario;
@@ -24,7 +22,6 @@ namespace SWIPCA_UNI_API.Controllers
             _userManager = userManager;
             _config = config;
         }
-
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
@@ -51,7 +48,7 @@ namespace SWIPCA_UNI_API.Controllers
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return BadRequest("No user found with this email address.");
+                return BadRequest("No se ha encontrado el usuario vinculado al correo");
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -63,7 +60,7 @@ namespace SWIPCA_UNI_API.Controllers
             // La variable resetURL queda pendiente de modificar debido a que no tengo idea de como devolver el url
             // ...
 
-            return Ok("Password reset email sent.");
+            return Ok("Correo de reinicio de contraseña enviado.");
         }
 
         [HttpPost("reiniciar-password")]
