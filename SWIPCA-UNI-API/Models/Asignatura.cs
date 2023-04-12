@@ -21,3 +21,10 @@ public partial class Asignatura
 
     public virtual Area IdAreaNavigation { get; set; } = null!;
 }
+
+public class AsignaturaDTO
+{
+    public string Nombre { get; set; }
+    public int Anio { get; set; }
+    public int Frecuencia { get; set; }
+}
