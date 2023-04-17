@@ -19,7 +19,7 @@ namespace SWIPCA_UNI_API.DataAccess
             db.CargaAcademicas.Add(cargaAcademica);
             await db.SaveChangesAsync();
         }
-        public async Task CambiarEstadoCargaAcademica(int idCargaAcademica)
+        public async Task CambiarEstadoCargaAcademicaAprobada(int idCargaAcademica)
         {
             var cargaAcademica = await db.CargaAcademicas.FindAsync(idCargaAcademica);
 
@@ -36,10 +36,25 @@ namespace SWIPCA_UNI_API.DataAccess
             cargaAcademica.Estado = 1;
             await db.SaveChangesAsync();
         }
-        public async Task<List<string[]>> ObtenerCargaAcademicaDocente(int IdDocente)
+        public async Task CambiarEstadoCargaAcademicaDenegada(int idCargaAcademica)
         {
-            var turnos = await db.Turnos.ToListAsync(); // Obtener la lista de turnos generalizados
+            var cargaAcademica = await db.CargaAcademicas.FindAsync(idCargaAcademica);
 
+            if (cargaAcademica == null)
+            {
+                throw new ArgumentException("La carga académica no existe");
+            }
+
+            if (cargaAcademica.Estado != 0)
+            {
+                throw new InvalidOperationException("La carga académica ya ha sido aprobada o rechazada");
+            }
+
+            cargaAcademica.Estado = 2;
+            await db.SaveChangesAsync();
+        }
+        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdDocente)
+        {
             var PRECargaAcademica = await (from carga in db.CargaAcademicas
                                            join docente in db.Docentes
                                            on carga.IdDocente equals docente.IdDocente
@@ -47,6 +62,8 @@ namespace SWIPCA_UNI_API.DataAccess
                                            on carga.IdClase equals clase.IdClase
                                            join grupo in db.Grupos
                                            on carga.IdGrupo equals grupo.IdGrupo
+                                           join turno in db.Turnos
+                                           on grupo.IdTurno equals turno.IdTurno
                                            join asignatura in db.Asignaturas
                                            on clase.IdAsignatura equals asignatura.IdAsignatura
                                            join carrera in db.Carreras
@@ -56,17 +73,17 @@ namespace SWIPCA_UNI_API.DataAccess
                                            join Aula_Lab in db.AulaLaboratorios
                                            on facultad.IdFacultad equals Aula_Lab.IdFacultad
                                            where carga.IdDocente == IdDocente && carga.Estado == 0
-                                           select $"{carga.IdCaHo}{{{asignatura.Nombre}}}{{{Aula_Lab.Nombre}}}{{{grupo.Nombre}}}{{{turnos.Single(t => t.IdTurno == grupo.IdTurno).Nombre}}}{{{carga.Observacion}}}{{{asignatura.Frecuencia}}}"
-                                            ).ToListAsync();
-
-            var cargaAcademicaList = new List<string[]>();
-            foreach (var cargaAcademica in PRECargaAcademica)
-            {
-                var cargaAcademicaArray = cargaAcademica.Split('{').Select(c => c.TrimEnd('}')).ToArray();
-                cargaAcademicaList.Add(cargaAcademicaArray);
-            }
-
-            return cargaAcademicaList;
+                                           select
+                                           new CargaAcademicaDTO
+                                           {
+                                               IdCarga = carga.IdCaHo,
+                                               Asignatura = asignatura.Nombre,
+                                               Aula = asignatura.Nombre,
+                                               Grupo = grupo.Nombre,
+                                               Turno = turno.Dia,
+                                               Observacion = carga.Observacion
+                                           }).ToListAsync();
+            return PRECargaAcademica;
         }
 
         public async Task GuardarCargaAcademica(CargaAcademica cargaAcademica)
@@ -81,6 +98,16 @@ namespace SWIPCA_UNI_API.DataAccess
             }
             await db.CargaAcademicas.AddAsync(cargaAcademica);
             await db.SaveChangesAsync();
+        }
+        public class CargaAcademicaDTO
+        {
+            public int IdCarga { get; set; }
+            public string Asignatura { get; set; }
+            public string Aula { get; set; }
+            public string Grupo { get; set; }
+            public string Turno { get; set; }
+            public string Observacion { get; set; }
+            public string ObservacionValidada => string.IsNullOrEmpty(Observacion) ? "Sin observaciones" : Observacion;
         }
 
     }
