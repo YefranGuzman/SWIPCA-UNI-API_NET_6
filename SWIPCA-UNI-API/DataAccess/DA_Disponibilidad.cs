@@ -53,6 +53,7 @@ namespace SWIPCA_UNI_API.DataAccess
             var DepartamentoJefe = await (from dpto in db.Departamentos
                                           join doc in db.Docentes
                                           on dpto.Jefe equals doc.IdDocente
+                                          where doc.IdDocente.Equals(idDocente)
                                           select doc.IdDocente).FirstOrDefaultAsync();
 
             var CargaAcademica = await (from C_Academica in db.CargaAcademicas

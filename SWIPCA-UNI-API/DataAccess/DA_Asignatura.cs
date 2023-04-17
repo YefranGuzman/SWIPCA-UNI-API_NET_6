@@ -53,6 +53,11 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return listAsignaturasDpto;
         }
-
+        public class AsignaturaDTO
+        {
+            public string Nombre { get; set; }
+            public int Anio { get; set; }
+            public int Frecuencia { get; set; }
+        }
     }
 }
