@@ -81,7 +81,7 @@ namespace SWIPCA_UNI_API.Controllers
                 return BadRequest("El id del Jefe no esta habilitado para modificar");
             }
 
-            var Result = await _daDisponibilidad.AprobarDisponibilidadesPorDepartamento(IdJefe);
+            var Result = await _daDisponibilidad.AprobarDisponibilidades(IdJefe);
 
             if (Result == null || !Result.Any())
             {
