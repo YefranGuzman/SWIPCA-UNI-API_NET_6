@@ -1,14 +1,29 @@
-﻿namespace SWIPCA_UNI_API.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace SWIPCA_UNI_API.Models;
+
+public partial class Historial
 {
-    public class Historial
-    {
-        public string? UsuarioCreacion { get; set; }
-        public DateTime? FechaCreacion { get; set; }
-        public string? UsuarioModificacion { get; set; }
-        public DateTime? FechaModificacion { get; set; }
-        public int idHorario { get; set; }
-        public int idCarrera { get; set; }
-        public int idClase { get; set; }
-        public int idGrupo { get; set; }
-    }
+    public int IdHistorial { get; set; }
+
+    public int IdAsignatura { get; set; }
+
+    public int IdCarrera { get; set; }
+
+    public int IdDocente { get; set; }
+
+    public int Asignatura { get; set; }
+
+    public int Docente { get; set; }
+
+    public int Carrera { get; set; }
+
+    public int Frecuencia { get; set; }
+
+    public virtual Asignatura IdAsignaturaNavigation { get; set; } = null!;
+
+    public virtual Carrera IdCarreraNavigation { get; set; } = null!;
+
+    public virtual Docente IdDocenteNavigation { get; set; } = null!;
 }

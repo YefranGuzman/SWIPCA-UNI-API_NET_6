@@ -1,16 +1,25 @@
-﻿namespace SWIPCA_UNI_API.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace SWIPCA_UNI_API.Models;
+
+public partial class Facultad
 {
-    public class Facultad
-    {
-        public string? UsuarioCreacion { get; set; }
-        public DateTime? FechaCreacion { get; set; }
-        public string? UsuarioModificacion { get; set; }
-        public DateTime? FechaModificacion { get; set; }
-        public int idFacultad { get; set; }
-        public string nombre { get; set; }
-        public string recinto {get; set;}
-        public int telefono { get; set;}
-        public int extension { get; set;}
-        public int idUsuario { get; set;}  
-    }
+    public int IdFacultad { get; set; }
+
+    public string Nombre { get; set; } = null!;
+
+    public string Ubicacion { get; set; } = null!;
+
+    public string Telefono { get; set; } = null!;
+
+    public int Vice { get; set; }
+
+    public virtual ICollection<AulaLaboratorio> AulaLaboratorios { get; } = new List<AulaLaboratorio>();
+
+    public virtual ICollection<Carrera> Carreras { get; } = new List<Carrera>();
+
+    public virtual ICollection<Departamento> Departamentos { get; } = new List<Departamento>();
+
+    public virtual Usuario ViceNavigation { get; set; } = null!;
 }
