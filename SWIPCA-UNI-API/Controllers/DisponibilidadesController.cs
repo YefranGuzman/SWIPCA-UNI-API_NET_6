@@ -73,5 +73,30 @@ namespace SWIPCA_UNI_API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("departamento/{idJefe}")]
+        public async Task<ActionResult<List<DA_Disponibilidad.SolicitudDisponibilidadDTO>>> AprobarDisponibilidadesPorDepartamento(int IdJefe) 
+        {
+            if (IdJefe <= 0)
+            {
+                return BadRequest("El id del Jefe no esta habilitado para modificar");
+            }
+
+            var Result = await _daDisponibilidad.AprobarDisponibilidadesPorDepartamento(IdJefe);
+
+            if (Result == null || !Result.Any())
+            {
+                return NotFound("No se encuentra ninguna solicitud actualmente");
+            }
+
+            return Ok(Result);
+        }
+        [HttpPost]
+        public async Task<bool> CambiarEstadoSolicitudDisponibilidad(int idSolicitud, int nuevoEstado)
+        {
+            await _daDisponibilidad.ActualizarEstadoSolicitudDisponibilidad(idSolicitud, nuevoEstado);
+
+            return true;
+        }
+
     }
 }
