@@ -104,6 +104,21 @@ namespace SWIPCA_UNI_API.DataAccess
                                               }).ToListAsync();
             return docentesdispobilidad;
         }
+        public async Task<bool> ActualizarEstadoSolicitudDisponibilidad(int idSolicitud, int nuevoEstado)
+        {
+            var solicitud = await db.Disponibilidads.FindAsync(idSolicitud);
+
+            if (solicitud == null)
+            {
+                throw new ArgumentException("La solicitud de disponibilidad no existe");
+            }
+
+            solicitud.Estado = nuevoEstado;
+            await db.SaveChangesAsync();
+
+            return true;
+        }
+
         public class SolicitudDisponibilidadDTO
         {
             public string Docente { get; set; }
