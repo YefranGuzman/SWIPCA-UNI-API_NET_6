@@ -53,8 +53,10 @@ namespace SWIPCA_UNI_API.DataAccess
             cargaAcademica.Estado = 2;
             await db.SaveChangesAsync();
         }
-        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdDocente)
+        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdDocente, int IdTurno)
         {
+            IdTurno = 0;//0 para Matutino, 1 para Vespertino y 2 para Nocturno
+
             var PRECargaAcademica = await (from carga in db.CargaAcademicas
                                            join docente in db.Docentes
                                            on carga.IdDocente equals docente.IdDocente
@@ -72,7 +74,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                            on carrera.IdFacultad equals facultad.IdFacultad
                                            join Aula_Lab in db.AulaLaboratorios
                                            on facultad.IdFacultad equals Aula_Lab.IdFacultad
-                                           where carga.IdDocente == IdDocente && carga.Estado == 0
+                                           where carga.IdDocente == IdDocente && carga.Estado == 0 && turno.IdTurno == IdTurno
                                            select
                                            new CargaAcademicaDTO
                                            {
