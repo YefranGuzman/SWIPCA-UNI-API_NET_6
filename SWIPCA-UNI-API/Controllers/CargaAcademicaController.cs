@@ -71,11 +71,11 @@ namespace SWIPCA_UNI_API.Controllers
             }
         }
         [HttpGet("{idDocente}")]
-        public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int idDocente)
+        public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int idDocente, int idTurno)
         {
             try
             {
-                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idDocente);
+                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idDocente, idTurno);
 
                 if (cargaAcademica == null || cargaAcademica.Count == 0)
                 {
