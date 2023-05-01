@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 namespace SWIPCA_UNI_API.Models;
 
-public partial class Laboratorio
+public partial class AulaLaboratorio
 {
-    public int IdLaboratorio { get; set; }
+    public int IdAuLa { get; set; }
 
     public string Nombre { get; set; } = null!;
+
+    public string Tipo { get; set; } = null!;
 
     public int IdFacultad { get; set; }
 
