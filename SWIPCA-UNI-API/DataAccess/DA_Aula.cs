@@ -22,7 +22,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                where docente.IdDocente == IdDocente
                                select aula
                               ).ToListAsync();
-
+    
             return aulas;
         }
     }

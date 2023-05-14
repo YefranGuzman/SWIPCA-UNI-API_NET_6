@@ -29,7 +29,7 @@ namespace SWIPCA_UNI_API.Controllers
 
             if (usuario == null || !_daUsuario.VerificarContrasena(usuario, model.Contrasena))
             {
-                return Unauthorized();
+                return Unauthorized("Usuario Desconocido o No autorizado");
             }
 
             var token = _jwtService.GenerarToken(usuario);

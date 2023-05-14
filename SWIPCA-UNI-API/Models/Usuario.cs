@@ -25,6 +25,8 @@ public partial class Usuario
 
     public string Contrasena { get; set; } = null!;
 
+    public int? Estado { get; set; }
+
     public virtual ICollection<Departamento> Departamentos { get; } = new List<Departamento>();
 
     public virtual ICollection<Facultad> Facultads { get; } = new List<Facultad>();

@@ -295,6 +295,7 @@ public partial class DbCargaAcademicaContext : DbContext
             entity.Property(e => e.IdDocente).HasColumnName("idDocente");
             entity.Property(e => e.Derpartamento).HasColumnName("derpartamento");
             entity.Property(e => e.Disponibilidad).HasColumnName("disponibilidad");
+            entity.Property(e => e.Estado).HasColumnName("estado");
             entity.Property(e => e.IdDepartamento).HasColumnName("idDepartamento");
             entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
             entity.Property(e => e.TipoContrato).HasColumnName("tipoContrato");
@@ -531,6 +532,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("email");
+            entity.Property(e => e.Estado).HasColumnName("estado");
             entity.Property(e => e.Nick)
                 .HasMaxLength(10)
                 .IsUnicode(false)
