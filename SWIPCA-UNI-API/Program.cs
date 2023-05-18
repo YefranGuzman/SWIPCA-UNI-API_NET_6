@@ -27,7 +27,8 @@ builder.Services.AddIdentity<Usuario, IdentityRole<int>>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
 })
-    .AddEntityFrameworkStores<DbCargaAcademicaContext>();
+    .AddEntityFrameworkStores<DbCargaAcademicaContext>()
+    .AddDefaultTokenProviders();
 
 // Agregar servicios DI
 builder.Services.AddScoped<DA_Usuario>();
@@ -40,6 +41,7 @@ builder.Services.AddScoped<DA_CargaAcademica>();
 builder.Services.AddScoped<DA_Aula>();
 builder.Services.AddScoped<DA_Asignatura>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<UserManager<Usuario>>();
 
 var app = builder.Build();
 
