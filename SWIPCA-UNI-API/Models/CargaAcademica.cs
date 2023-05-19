@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace SWIPCA_UNI_API.Models;
 
 public partial class CargaAcademica
 {
+    [BindNever]
     public int IdCaHo { get; set; }
 
     public int IdCarrera { get; set; }
