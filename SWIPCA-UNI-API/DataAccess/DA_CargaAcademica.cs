@@ -16,9 +16,22 @@ namespace SWIPCA_UNI_API.DataAccess
                 throw new Exception("Ya existe una carga académica con los mismos valores de IdCarrera, IdClase, IdGrupo e IdDocente.");
             }
 
+            var grupo = await db.Grupos.FirstOrDefaultAsync(g => g.IdGrupo == cargaAcademica.IdGrupo);
+            if (grupo == null)
+            {
+                throw new Exception($"No se encontró el grupo para el IdGrupo: {cargaAcademica.IdGrupo}");
+            }
+
+            var clase = await db.Clases.FirstOrDefaultAsync(c => c.IdClase == cargaAcademica.IdClase);
+            if (clase == null)
+            {
+                throw new Exception($"No se encontró la clase para el IdClase: {cargaAcademica.IdClase}");
+            }
+
             db.CargaAcademicas.Add(cargaAcademica);
             await db.SaveChangesAsync();
         }
+
         public async Task CambiarEstadoCargaAcademicaAprobada(int idCargaAcademica)
         {
             var cargaAcademica = await db.CargaAcademicas.FindAsync(idCargaAcademica);
@@ -55,7 +68,9 @@ namespace SWIPCA_UNI_API.DataAccess
         }
         public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdDocente, int IdTurno)
         {
-            IdTurno = 0;//0 para Matutino, 1 para Vespertino y 2 para Nocturno
+            if ( IdTurno == null) {
+                IdTurno = 0;//0 para Matutino, 1 para Vespertino y 2 para Nocturno
+            }
 
             var PRECargaAcademica = await (from carga in db.CargaAcademicas
                                            join docente in db.Docentes on carga.IdDocente equals docente.IdDocente
@@ -67,7 +82,9 @@ namespace SWIPCA_UNI_API.DataAccess
                                            join facultad in db.Facultads on carrera.IdFacultad equals facultad.IdFacultad
                                            join Aula_Lab in db.AulaLaboratorios on facultad.IdFacultad equals Aula_Lab.IdFacultad
                                            where carga.IdDocente == IdDocente && carga.Estado == 0 && turno.IdTurno == IdTurno
-                                           group new { asignatura, turno } by new { carga.IdCaHo, grupo.Nombre, carga.Observacion, Aula = asignatura.Nombre, asignatura.Frecuencia } into g
+                                           group new { asignatura, turno } 
+                                           by new { carga.IdCaHo, grupo.Nombre, carga.Observacion, Aula = asignatura.Nombre, asignatura.Frecuencia } 
+                                           into g
                                            select new CargaAcademicaDTO
                                            {
                                                IdCarga = g.Key.IdCaHo,
@@ -80,7 +97,6 @@ namespace SWIPCA_UNI_API.DataAccess
                                            }).ToListAsync();
             return PRECargaAcademica;
         }
-
         public async Task GuardarCargaAcademica(CargaAcademica cargaAcademica)
         {
             if (cargaAcademica.IdCarrera == 0 ||

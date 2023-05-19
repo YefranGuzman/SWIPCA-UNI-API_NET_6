@@ -19,8 +19,6 @@ public partial class Docente
 
     public int? Estado { get; set; }
 
-    public virtual ICollection<CargaAcademica> CargaAcademicas { get; } = new List<CargaAcademica>();
-
     public virtual ICollection<Clase> Clases { get; } = new List<Clase>();
 
     public virtual ICollection<Disponibilidad> Disponibilidads { get; } = new List<Disponibilidad>();

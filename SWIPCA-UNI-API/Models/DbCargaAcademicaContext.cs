@@ -49,6 +49,8 @@ public partial class DbCargaAcademicaContext : DbContext
 
     public virtual DbSet<Rol> Rols { get; set; }
 
+    public virtual DbSet<TempTabla> TempTablas { get; set; }
+
     public virtual DbSet<Titulo> Titulos { get; set; }
 
     public virtual DbSet<Turno> Turnos { get; set; }
@@ -124,11 +126,10 @@ public partial class DbCargaAcademicaContext : DbContext
 
         modelBuilder.Entity<CargaAcademica>(entity =>
         {
-            entity.HasKey(e => e.IdCaHo).HasName("PK__CargaAca__8BC687CC5D354FE6");
+            entity.HasKey(e => e.IdCaHo).HasName("PK__CargaAca__3B7A0699D7B278FB");
 
             entity.ToTable("CargaAcademica");
 
-            entity.Property(e => e.IdCaHo).HasColumnName("idCaHo");
             entity.Property(e => e.Estado).HasColumnName("estado");
             entity.Property(e => e.IdCarrera).HasColumnName("idCarrera");
             entity.Property(e => e.IdClase).HasColumnName("idClase");
@@ -136,28 +137,8 @@ public partial class DbCargaAcademicaContext : DbContext
             entity.Property(e => e.IdGrupo).HasColumnName("idGrupo");
             entity.Property(e => e.IdJefe).HasColumnName("idJefe");
             entity.Property(e => e.Observacion)
-                .HasMaxLength(150)
+                .HasMaxLength(256)
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.IdCarreraNavigation).WithMany(p => p.CargaAcademicas)
-                .HasForeignKey(d => d.IdCarrera)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_carrera_Carga");
-
-            entity.HasOne(d => d.IdClaseNavigation).WithMany(p => p.CargaAcademicas)
-                .HasForeignKey(d => d.IdClase)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_clase_Carga");
-
-            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.CargaAcademicas)
-                .HasForeignKey(d => d.IdDocente)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_docente_cargahoraria");
-
-            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.CargaAcademicas)
-                .HasForeignKey(d => d.IdGrupo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_grupo_Carga");
         });
 
         modelBuilder.Entity<Carrera>(entity =>
@@ -470,6 +451,26 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false)
                 .HasColumnName("titulo");
+        });
+
+        modelBuilder.Entity<TempTabla>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("TempTabla");
+
+            entity.Property(e => e.Estado).HasColumnName("estado");
+            entity.Property(e => e.IdCaHo)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("idCaHo");
+            entity.Property(e => e.IdCarrera).HasColumnName("idCarrera");
+            entity.Property(e => e.IdClase).HasColumnName("idClase");
+            entity.Property(e => e.IdDocente).HasColumnName("idDocente");
+            entity.Property(e => e.IdGrupo).HasColumnName("idGrupo");
+            entity.Property(e => e.IdJefe).HasColumnName("idJefe");
+            entity.Property(e => e.Observacion)
+                .HasMaxLength(150)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Titulo>(entity =>

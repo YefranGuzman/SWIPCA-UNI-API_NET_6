@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SWIPCA_UNI_API.Models;
 
-public partial class CargaAcademica
+public partial class TempTabla
 {
     public int IdCaHo { get; set; }
 

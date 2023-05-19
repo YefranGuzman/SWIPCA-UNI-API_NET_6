@@ -25,7 +25,19 @@ namespace SWIPCA_UNI_API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var innerException = ex.InnerException;
+                if (innerException != null)
+                {
+                    // Acceder al mensaje de la excepción interna
+                    var errorMessage = innerException.Message;
+                    // Devolver el mensaje de error como respuesta al cliente
+                    return BadRequest(errorMessage);
+                }
+                else
+                {
+                    // Si no hay excepción interna, devolver el mensaje de error de la excepción general
+                    return BadRequest(ex.Message);
+                }
             }
         }
         [HttpPost("aprobar/{idCargaAcademica}")]
