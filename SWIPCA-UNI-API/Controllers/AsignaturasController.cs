@@ -24,5 +24,6 @@ namespace SWIPCA_UNI_API.Controllers
             await Asignaturas.ActualizarAsignatura(asignatura);
             return Ok(asignatura);
         }
+
     }
 }
