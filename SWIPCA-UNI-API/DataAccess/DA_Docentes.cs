@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using SWIPCA_UNI_API.Models;
+using SWIPCA_UNI_API.Controllers;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
@@ -22,40 +24,29 @@ namespace SWIPCA_UNI_API.DataAccess
             return listaDocentes;
         }
 
-        public async Task<List<string>> ObtenerDisponibilidadDocente(int idDocente)
+        public async Task<List<string>> ObtenerDisponibilidadDocente(int idUsuario)
         {
+            var IdDocente = await (from a in db.Usuarios
+                                   join b in db.Docentes
+                                   on a.IdUsuario equals b.IdUsuario
+                                   where a.IdUsuario == idUsuario
+                                   select b.IdDocente).FirstOrDefaultAsync();
+
             var listarDisponibilidad = await (from a in db.Disponibilidads
-                                              join b in db.Docentes
-                                              on a.IdDocente equals b.IdDocente
-                                              where a.IdDocente == idDocente
-                                              select a.Fecha + " " + a.TipoJustificación + " " + a.Periodicidad + " " + a.Observacíon + " " + a.Evidencia).ToListAsync();
+                                              where a.IdDocente == IdDocente
+                                              select $"{a.Fecha} {a.TipoJustificación} {a.Periodicidad} {a.Observacíon} {a.Evidencia}").ToListAsync();
+
             return listarDisponibilidad;
         }
-        public async Task<List<string>> ObtenerCargaDocentesLaboral(int IdDocente)
-        {
-            var ListaOCB = await (from DC in db.Docentes
-                                          join CS in db.Clases
-                                          on DC.IdDocente equals CS.IdDocente
-                                          join AA in db.Asignaturas
-                                          on CS.IdAsignatura equals AA.IdAsignatura
-                                          join HS in db.Horarios
-                                          on CS.IdClase equals HS.IdClase
-                                          join GT in db.Grupos
-                                          on HS.IdGrupo equals GT.IdGrupo
-                                          join DP in db.Departamentos
-                                          on DC.IdDepartamento equals DP.IdDepartamento
-                                          join FT in db.Facultads
-                                          on DP.IdFacultad equals FT.IdFacultad
-                                          join AU in db.AulaLaboratorios
-                                          on FT.IdFacultad equals AU.IdFacultad
-                                          where DC.IdDocente == IdDocente && CS.Dia == DateTime.Today.ToString()
-                                          select AA.Nombre + " " + CS.Dia + " " + GT.Nombre + " " + AU.Nombre + " " + CS.HoraInicio
-                ).ToListAsync();
-            return ListaOCB;
-        }
 
-        public async Task<List<string>> ObtenerAgendaDocente(int IdDocente)
+        public async Task<List<string>> ObtenerAgendaDocente(int idUsuario)
         {
+            var IdDocente = await (from a in db.Usuarios
+                                   join b in db.Docentes
+                                   on a.IdUsuario equals b.IdUsuario
+                                   where a.IdUsuario == idUsuario
+                                   select $"{b.IdDocente}").FirstOrDefaultAsync();
+
             var AgendaDocenteClases = await (from DC in db.Docentes
                                              join CS in db.Clases
                                              on DC.IdDocente equals CS.IdDocente
@@ -73,7 +64,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                              on FT.IdFacultad equals AU.IdFacultad
                                              join DIS in db.Disponibilidads
                                              on DC.IdDocente equals DIS.IdDocente
-                                             where DC.IdDocente == IdDocente
+                                             where DC.IdDocente == int.Parse(IdDocente)
                                              select $"{DIS.Fecha}{DIS.Observacíon}"
                                         ).ToListAsync();
             if (AgendaDocenteClases.Any())

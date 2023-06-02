@@ -15,8 +15,6 @@ public partial class Grupo
 
     public int Turno { get; set; }
 
-    public virtual ICollection<CargaAcademica> CargaAcademicas { get; } = new List<CargaAcademica>();
-
     public virtual ICollection<Horario> Horarios { get; } = new List<Horario>();
 
     public virtual Carrera IdCarreraNavigation { get; set; } = null!;

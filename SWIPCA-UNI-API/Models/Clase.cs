@@ -19,8 +19,6 @@ public partial class Clase
 
     public string Dia { get; set; } = null!;
 
-    public virtual ICollection<CargaAcademica> CargaAcademicas { get; } = new List<CargaAcademica>();
-
     public virtual ICollection<Horario> Horarios { get; } = new List<Horario>();
 
     public virtual Asignatura IdAsignaturaNavigation { get; set; } = null!;

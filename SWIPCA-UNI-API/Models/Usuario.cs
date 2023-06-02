@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace SWIPCA_UNI_API.Models;
 
-public partial class Usuario
+public partial class Usuario : IdentityUser<int>
 {
     public int IdUsuario { get; set; }
 
@@ -24,6 +25,8 @@ public partial class Usuario
     public string Nick { get; set; } = null!;
 
     public string Contrasena { get; set; } = null!;
+
+    public int? Estado { get; set; }
 
     public virtual ICollection<Departamento> Departamentos { get; } = new List<Departamento>();
 
