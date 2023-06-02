@@ -19,28 +19,21 @@ namespace SWIPCA_UNI_API.Controllers
         }
 
         [HttpGet("{idDocente}/disponibilidad")]
-        public async Task<ActionResult<List<string>>> ObtenerDisponibilidadDocente(int idDocente)
+        public async Task<ActionResult<List<string>>> ObtenerDisponibilidadDocente(int idUsuario)
         {
             var GODD = new DA_Docentes();
-            var L_GODD = await GODD.ObtenerDisponibilidadDocente(idDocente);
+            var L_GODD = await GODD.ObtenerDisponibilidadDocente(idUsuario);
 
             return L_GODD;
         }
 
         [HttpGet("{idDocente}/carga-laboral")]
-        public async Task<ActionResult<List<string>>> ObtenerCargaDocentesLaboral(int idDocente)
-        {
-            var GOCD = new DA_Docentes();
-            var L_GOCD = await GOCD.ObtenerCargaDocentesLaboral(idDocente);
-
-            return L_GOCD;
-        }
 
         [HttpGet("{idDocente}/agenda")]
-        public async Task<ActionResult<List<string>>> ObtenerAgendaDocente(int idDocente)
+        public async Task<ActionResult<List<string>>> ObtenerAgendaDocente(int idUsuario)
         {
             var GTAD = new DA_Docentes();
-            var L_GTAD = await GTAD.ObtenerAgendaDocente(idDocente);
+            var L_GTAD = await GTAD.ObtenerAgendaDocente(idUsuario);
 
             return L_GTAD;
         }

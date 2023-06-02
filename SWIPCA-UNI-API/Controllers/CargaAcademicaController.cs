@@ -25,10 +25,22 @@ namespace SWIPCA_UNI_API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var innerException = ex.InnerException;
+                if (innerException != null)
+                {
+                    // Acceder al mensaje de la excepción interna
+                    var errorMessage = innerException.Message;
+                    // Devolver el mensaje de error como respuesta al cliente
+                    return BadRequest(errorMessage);
+                }
+                else
+                {
+                    // Si no hay excepción interna, devolver el mensaje de error de la excepción general
+                    return BadRequest(ex.Message);
+                }
             }
         }
-        [HttpPost]
+        [HttpPost("aprobar/{idCargaAcademica}")]
         public async Task<IActionResult> CambiarEstadoCargaAcademicaAprobada(int idCargaAcademica)
         {
             try
@@ -49,7 +61,7 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(500, "Ocurrió un error interno en el servidor");
             }
         }
-        [HttpPost]
+        [HttpPost("denegar/{idCargaAcademica}")]
         public async Task<IActionResult> CambiarEstadoCargaAcademicaDenegada(int idCargaAcademica)
         {
             try
@@ -70,14 +82,14 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(500, "Ocurrió un error interno en el servidor");
             }
         }
-        [HttpGet("{idDocente}")]
-        public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int idDocente, int idTurno)
+        [HttpGet("ObtenerCargas/{idDocente}")]
+        public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int idUsuario, int IdTurno)
         {
             try
             {
-                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idDocente, idTurno);
+                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idUsuario,IdTurno);
 
-                if (cargaAcademica == null || cargaAcademica.Count == 0)
+                if (cargaAcademica == null)
                 {
                     return NotFound("Cargas no encontradadas");
                 }

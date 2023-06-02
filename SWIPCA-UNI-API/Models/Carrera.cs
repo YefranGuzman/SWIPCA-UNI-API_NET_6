@@ -15,8 +15,6 @@ public partial class Carrera
 
     public int Duracion { get; set; }
 
-    public virtual ICollection<CargaAcademica> CargaAcademicas { get; } = new List<CargaAcademica>();
-
     public virtual ICollection<Grupo> Grupos { get; } = new List<Grupo>();
 
     public virtual ICollection<Historial> Historials { get; } = new List<Historial>();
