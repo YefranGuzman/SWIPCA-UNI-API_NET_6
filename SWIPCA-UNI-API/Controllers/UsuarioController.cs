@@ -2,8 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using SWIPCA_UNI_API.DataAccess;
+using SWIPCA_UNI_API.Models; // Asumiendo que la clase 'Usuario' está en el espacio de nombres 'SWIPCA_UNI_API.Models'
 using System.Text;
+using System.Threading.Tasks;
+
 
 namespace SWIPCA_UNI_API.Controllers
 {
@@ -11,11 +15,12 @@ namespace SWIPCA_UNI_API.Controllers
     [ApiController]
     public class Usuario : ControllerBase
     {
+
         private readonly DA_Usuario _daUsuario;
         private readonly DA_Usuario.JwtService _jwtService;
-        private readonly UserManager<Usuario> _userManager;
+        private readonly UserManager<Models.Usuario> _userManager;
         private readonly IConfiguration _config;
-        public Usuario(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Usuario> userManager, IConfiguration config)
+        public Usuario(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Models.Usuario> userManager, IConfiguration config)
         {
             _daUsuario = daUsuario;
             _jwtService = jwtService;
@@ -29,7 +34,7 @@ namespace SWIPCA_UNI_API.Controllers
 
             if (usuario == null || !_daUsuario.VerificarContrasena(usuario, model.Contrasena))
             {
-                return Unauthorized();
+                return Unauthorized("Usuario Desconocido o No autorizado");
             }
 
             var token = _jwtService.GenerarToken(usuario);
