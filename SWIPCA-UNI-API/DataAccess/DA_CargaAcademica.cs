@@ -66,22 +66,23 @@ namespace SWIPCA_UNI_API.DataAccess
             cargaAcademica.Estado = 2;
             await db.SaveChangesAsync();
         }
-        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdDocente, int IdTurno)
+        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdUsuario, int IdTurno)
         {
-            if ( IdTurno == null) {
+            if (IdTurno == null) {
                 IdTurno = 0;//0 para Matutino, 1 para Vespertino y 2 para Nocturno
             }
 
             var PRECargaAcademica = await (from carga in db.CargaAcademicas
                                            join docente in db.Docentes on carga.IdDocente equals docente.IdDocente
+                                           join usuario in db.Usuarios on docente.IdUsuario equals usuario.IdUsuario
                                            join clase in db.Clases on carga.IdClase equals clase.IdClase
                                            join grupo in db.Grupos on carga.IdGrupo equals grupo.IdGrupo
                                            join turno in db.Turnos on grupo.IdTurno equals turno.IdTurno
                                            join asignatura in db.Asignaturas on clase.IdAsignatura equals asignatura.IdAsignatura
                                            join carrera in db.Carreras on carga.IdCarrera equals carrera.IdCarrera
                                            join facultad in db.Facultads on carrera.IdFacultad equals facultad.IdFacultad
-                                           join Aula_Lab in db.AulaLaboratorios on facultad.IdFacultad equals Aula_Lab.IdFacultad
-                                           where carga.IdDocente == IdDocente && carga.Estado == 0 && turno.IdTurno == IdTurno
+                                           join Aula_Lab in db.AulaLaboratorios on usuario.IdUsuario equals Aula_Lab.IdFacultad
+                                           where usuario.IdUsuario == IdUsuario && carga.Estado == 0 && turno.IdTurno == IdTurno
                                            group new { asignatura, turno } 
                                            by new { carga.IdCaHo, grupo.Nombre, carga.Observacion, Aula = asignatura.Nombre, asignatura.Frecuencia } 
                                            into g
