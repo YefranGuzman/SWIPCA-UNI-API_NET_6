@@ -13,13 +13,14 @@ namespace SWIPCA_UNI_API.DataAccess
             var listAula = await cn.AulaLaboratorios.ToListAsync();
             return listAula.ToList();
         }
-        public async Task<List<AulaLaboratorio>> ListarAulaPorFacultad(int IdDocente)
+        public async Task<List<AulaLaboratorio>> ListarAulaPorFacultad(int IdUsuario)
         {
             var aulasAsignadas = await (from aula in cn.AulaLaboratorios
                                join facultad in cn.Facultads on aula.IdFacultad equals facultad.IdFacultad
                                join departamento in cn.Departamentos on facultad.IdFacultad equals departamento.IdFacultad
                                join docente in cn.Docentes on departamento.IdDepartamento equals docente.IdDepartamento
-                               where docente.IdDocente == IdDocente
+                               join usuario in cn.Usuarios on docente.IdUsuario equals usuario.IdUsuario
+                               where docente.IdUsuario == IdUsuario
                                select aula
                               ).ToListAsync();
             var aulasNoAsignadas = await (

@@ -82,7 +82,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                            join carrera in db.Carreras on carga.IdCarrera equals carrera.IdCarrera
                                            join facultad in db.Facultads on carrera.IdFacultad equals facultad.IdFacultad
                                            join Aula_Lab in db.AulaLaboratorios on usuario.IdUsuario equals Aula_Lab.IdFacultad
-                                           where usuario.IdUsuario == IdUsuario && carga.Estado == 0 && turno.IdTurno == IdTurno
+                                           where docente.IdUsuario == IdUsuario && carga.Estado == 0 && turno.IdTurno == IdTurno
                                            group new { asignatura, turno } 
                                            by new { carga.IdCaHo, grupo.Nombre, carga.Observacion, Aula = asignatura.Nombre, asignatura.Frecuencia } 
                                            into g
