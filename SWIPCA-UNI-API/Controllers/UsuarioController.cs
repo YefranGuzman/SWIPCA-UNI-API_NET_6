@@ -67,7 +67,6 @@ namespace SWIPCA_UNI_API.Controllers
 
             return Ok("Correo de reinicio de contraseña enviado.");
         }
-
         [HttpPost("reiniciar-password")]
         public async Task<IActionResult> Reiniciar_Password(string email, string password, string token)
         {
@@ -88,7 +87,6 @@ namespace SWIPCA_UNI_API.Controllers
 
             return Ok("Contraseña Reiniciada Exitosamente");
         }
-
     }
 
     public class LoginRequest
