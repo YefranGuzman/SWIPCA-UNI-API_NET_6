@@ -11,6 +11,33 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Usuario
     {
         DbCargaAcademicaContext cn = new();
+        public async Task<int> ObtenerDocente(int idUsuario)
+        {
+            var usuario = await (from a in cn.Usuarios
+                                 join b in cn.Departamentos on a.IdUsuario equals b.Jefe
+                                 where a.IdUsuario == idUsuario
+                                 select b.Jefe).FirstOrDefaultAsync();
+
+            return usuario;
+        }
+        public async Task<int> ObtenerJefeDepartamento(int idUsuario)
+        {
+            var usuario = await (from a in cn.Usuarios
+                                 join b in cn.Departamentos on a.IdUsuario equals b.Jefe
+                                 where a.IdUsuario == idUsuario
+                                 select b.Jefe).FirstOrDefaultAsync();
+
+            return usuario;
+        }
+        public async Task<int> ObtenerVicedecano(int idUsuario)
+        {
+            var usuario = await (from a in cn.Usuarios
+                                 join b in cn.Facultads on a.IdUsuario equals b.Vice
+                                 where a.IdUsuario == idUsuario
+                                 select b.Vice).FirstOrDefaultAsync();
+
+            return usuario;
+        }
 
         public async Task<Usuario> ObtenerPorNick(string Nick)
         {

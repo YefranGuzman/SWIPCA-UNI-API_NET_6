@@ -13,6 +13,7 @@ namespace SWIPCA_UNI_API.Controllers
     public class DisponibilidadesController : ControllerBase
     {
         private readonly DA_Disponibilidad _daDisponibilidad;
+        private readonly DA_Usuario dA_Usuario;
 
         public DisponibilidadesController(DA_Disponibilidad daDisponibilidad)
         {
@@ -74,14 +75,11 @@ namespace SWIPCA_UNI_API.Controllers
             return Ok(result);
         }
         [HttpGet("departamento/{idJefe}")]
-        public async Task<ActionResult<List<DA_Disponibilidad.SolicitudDisponibilidadDTO>>> AprobarDisponibilidadesPorDepartamento(int IdJefe) 
+        public async Task<ActionResult<List<DA_Disponibilidad.SolicitudDisponibilidadDTO>>> AprobarDisponibilidadesPorDepartamento(int IdUsuario) 
         {
-            if (IdJefe <= 0)
-            {
-                return BadRequest("El id del Jefe no esta habilitado para modificar");
-            }
+            var usuario = await dA_Usuario.ObtenerJefeDepartamento(IdUsuario);
 
-            var Result = await _daDisponibilidad.AprobarDisponibilidades(IdJefe);
+            var Result = await _daDisponibilidad.AprobarDisponibilidades(usuario);
 
             if (Result == null || !Result.Any())
             {

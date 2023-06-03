@@ -87,7 +87,7 @@ namespace SWIPCA_UNI_API.Controllers
         {
             try
             {
-                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idUsuario,IdTurno);
+                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idUsuario, IdTurno);
 
                 if (cargaAcademica == null)
                 {
