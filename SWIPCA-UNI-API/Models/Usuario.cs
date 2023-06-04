@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace SWIPCA_UNI_API.Models;
 
-public partial class Usuario
+public partial class Usuario : IdentityUser<int>
 {
     public int IdUsuario { get; set; }
 
