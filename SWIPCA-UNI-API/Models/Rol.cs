@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace SWIPCA_UNI_API.Models;
 
-public partial class Rol
+public partial class Rol : IdentityRole<int>
 {
     public int IdRol { get; set; }
 
