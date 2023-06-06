@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,6 +12,7 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Usuario
     {
         DbCargaAcademicaContext cn = new();
+        private static List<string> activeTokens = new List<string>();
         public async Task<int> ObtenerDocente(int idUsuario)
         {
             var usuario = await (from a in cn.Usuarios
@@ -38,25 +40,34 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return usuario;
         }
-
         public async Task<Usuario> ObtenerPorNick(string Nick)
         {
-            var usuario = await cn.Usuarios.SingleOrDefaultAsync(x => x.Nick == Nick);
+
+            var usuario = await cn.Usuarios.Include(u => u.TipoRolNavigation)
+                                    .FirstOrDefaultAsync(x => x.Nick == Nick);
             if (usuario == null)
             {
                 throw new Exception("No se encontró ningún usuario con ese Nick.");
             }
             return usuario;
         }
-
         public bool VerificarContrasena(Usuario usuario, string contrasena)
         {
-            var passwordHasher = new PasswordHasher<Usuario>();
-            var resultado = passwordHasher.VerifyHashedPassword(usuario, usuario.Contrasena, contrasena);
+            string hashedPassword = HashPassword(contrasena); // Generar el hash de la contraseña ingresada
 
-            return resultado == PasswordVerificationResult.Success;
+            return usuario.PasswordHash == hashedPassword; // Comparar el hash almacenado con el hash generado
         }
 
+        private string HashPassword(string contrasena)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(contrasena);
+                byte[] hashBytes = sha256.ComputeHash(bytes);
+                string hashedPassword = Convert.ToBase64String(hashBytes);
+                return hashedPassword;
+            }
+        }
         public class JwtService
         {
             private readonly IConfiguration _configuration;
@@ -72,10 +83,11 @@ namespace SWIPCA_UNI_API.DataAccess
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, usuario.IdUsuario.ToString()),
                     new Claim("rol", usuario.TipoRolNavigation.Titulo),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("userId", usuario.IdUsuario.ToString())
                 };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
@@ -88,8 +100,6 @@ namespace SWIPCA_UNI_API.DataAccess
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
             }
-
         }
-
     }
 }

@@ -29,7 +29,7 @@ public partial class Docente
 
     public virtual Departamento IdDepartamentoNavigation { get; set; } = null!;
 
-    public virtual Contrato TipoContratoNavigation { get; set; } = null!;
+    public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
 
-    public virtual Usuario? Usuario { get; set; }
+    public virtual Contrato TipoContratoNavigation { get; set; } = null!;
 }
