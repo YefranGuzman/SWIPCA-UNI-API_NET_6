@@ -39,10 +39,15 @@ namespace SWIPCA_UNI_API.Controllers
 
             var token = _jwtService.GenerarToken(usuario);
 
-            return Ok(new { token });
+            if (token == null)
+            {
+                return BadRequest("No se pudo generar el token");
+            }
+
+            return Ok(new { token, usuario.IdUsuario });
         }
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpPost("logout/{token}")]
+        public async Task<IActionResult> Logout(string token)
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction("Login");
@@ -67,7 +72,6 @@ namespace SWIPCA_UNI_API.Controllers
 
             return Ok("Correo de reinicio de contraseña enviado.");
         }
-
         [HttpPost("reiniciar-password")]
         public async Task<IActionResult> Reiniciar_Password(string email, string password, string token)
         {
@@ -88,7 +92,6 @@ namespace SWIPCA_UNI_API.Controllers
 
             return Ok("Contraseña Reiniciada Exitosamente");
         }
-
     }
 
     public class LoginRequest
