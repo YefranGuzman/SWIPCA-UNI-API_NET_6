@@ -8,7 +8,6 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Disponibilidad
     {
         DbCargaAcademicaContext db = new DbCargaAcademicaContext();
-
         public async Task<string> GuardarDisponibilidadDocente(int IdDocente, string Observacion, int Periodo, string Evidencia, int Estado, int TipoJustificacion)
         {
             if (IdDocente == 0)

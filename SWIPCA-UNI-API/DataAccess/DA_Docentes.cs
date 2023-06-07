@@ -41,11 +41,7 @@ namespace SWIPCA_UNI_API.DataAccess
 
         public async Task<List<string>> ObtenerAgendaDocente(int idUsuario)
         {
-            var IdDocente = await (from a in db.Usuarios
-                                   join b in db.Docentes
-                                   on a.IdUsuario equals b.IdUsuario
-                                   where a.IdUsuario == idUsuario
-                                   select $"{b.IdDocente}").FirstOrDefaultAsync();
+            
 
             var AgendaDocenteClases = await (from DC in db.Docentes
                                              join CS in db.Clases
@@ -64,7 +60,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                              on FT.IdFacultad equals AU.IdFacultad
                                              join DIS in db.Disponibilidads
                                              on DC.IdDocente equals DIS.IdDocente
-                                             where DC.IdDocente == int.Parse(IdDocente)
+                                             where DC.IdDocente == idUsuario
                                              select $"{DIS.Fecha}{DIS.Observacíon}"
                                         ).ToListAsync();
             if (AgendaDocenteClases.Any())

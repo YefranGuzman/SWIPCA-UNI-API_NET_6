@@ -26,6 +26,8 @@ builder.Services.AddIdentity<Usuario, IdentityRole<int>>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
+    options.User.AllowedUserNameCharacters = null; // Permite cualquier carácter en el nombre de usuario
+    options.User.RequireUniqueEmail = false; // Permite correos electrónicos duplicados
 })
     .AddEntityFrameworkStores<DbCargaAcademicaContext>()
     .AddDefaultTokenProviders();
