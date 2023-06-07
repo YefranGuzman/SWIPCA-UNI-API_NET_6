@@ -54,11 +54,15 @@ public partial class Usuario : IdentityUser<int>
 
     public int? Estado { get; set; }
 
+    public string? ConcurrencyStamp { get; set; }
+
+    public string? SecurityStamp { get; set; }
+
     public virtual ICollection<Departamento> Departamentos { get; } = new List<Departamento>();
 
-    public virtual ICollection<Facultad> Facultads { get; } = new List<Facultad>();
+    public virtual ICollection<Docente> Docentes { get; } = new List<Docente>();
 
-    public virtual Docente IdUsuarioNavigation { get; set; } = null!;
+    public virtual ICollection<Facultad> Facultads { get; } = new List<Facultad>();
 
     public virtual Rol TipoRolNavigation { get; set; } = null!;
 }

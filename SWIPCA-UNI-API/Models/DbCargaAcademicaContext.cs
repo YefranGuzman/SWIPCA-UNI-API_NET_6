@@ -306,6 +306,11 @@ public partial class DbCargaAcademicaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_departamento_docente");
 
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Docentes)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Docente_Usuario1");
+
             entity.HasOne(d => d.TipoContratoNavigation).WithMany(p => p.Docentes)
                 .HasForeignKey(d => d.TipoContrato)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -540,11 +545,11 @@ public partial class DbCargaAcademicaContext : DbContext
 
             entity.ToTable("Usuario");
 
-            entity.Property(e => e.IdUsuario).ValueGeneratedOnAdd();
             entity.Property(e => e.Celular)
                 .HasMaxLength(12)
                 .IsFixedLength()
                 .HasColumnName("celular");
+            entity.Property(e => e.ConcurrencyStamp).HasMaxLength(256);
             entity.Property(e => e.Contrasena)
                 .HasMaxLength(15)
                 .IsUnicode(false)
@@ -567,6 +572,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("primerNombre");
             entity.Property(e => e.RoleId).HasMaxLength(450);
+            entity.Property(e => e.SecurityStamp).HasMaxLength(256);
             entity.Property(e => e.SegundoApellido)
                 .HasMaxLength(25)
                 .IsUnicode(false)
@@ -577,11 +583,6 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasColumnName("segundoNombre");
             entity.Property(e => e.TipoRol).HasColumnName("tipoRol");
             entity.Property(e => e.UserName).HasMaxLength(256);
-
-            entity.HasOne(d => d.IdUsuarioNavigation).WithOne(p => p.Usuario)
-                .HasForeignKey<Usuario>(d => d.IdUsuario)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_docente_usuario");
 
             entity.HasOne(d => d.TipoRolNavigation).WithMany(p => p.Usuarios)
                 .HasForeignKey(d => d.TipoRol)
