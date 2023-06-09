@@ -45,6 +45,16 @@ builder.Services.AddScoped<DA_Asignatura>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<UserManager<Usuario>>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -52,6 +62,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors();
 }
 
 app.UseHttpsRedirection();
