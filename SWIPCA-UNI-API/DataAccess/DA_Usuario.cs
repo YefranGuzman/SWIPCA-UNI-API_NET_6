@@ -42,7 +42,6 @@ namespace SWIPCA_UNI_API.DataAccess
         }
         public async Task<Usuario> ObtenerPorNick(string Nick)
         {
-
             var usuario = await cn.Usuarios.Include(u => u.TipoRolNavigation)
                                     .FirstOrDefaultAsync(x => x.Nick == Nick);
             if (usuario == null)
@@ -57,7 +56,6 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return usuario.PasswordHash == hashedPassword; // Comparar el hash almacenado con el hash generado
         }
-
         private string HashPassword(string contrasena)
         {
             using (var sha256 = SHA256.Create())
@@ -71,12 +69,10 @@ namespace SWIPCA_UNI_API.DataAccess
         public class JwtService
         {
             private readonly IConfiguration _configuration;
-
             public JwtService(IConfiguration configuration)
             {
                 _configuration = configuration;
             }
-
             public string GenerarToken(Usuario usuario)
             {
                 var claims = new[]
@@ -98,8 +94,17 @@ namespace SWIPCA_UNI_API.DataAccess
                     signingCredentials: creds
                 );
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
+                string tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+                // Agregar el token a la lista de activeTokens
+                activeTokens.Add(tokenString);
+
+                return tokenString;
             }
+        }
+        public static void RemoveToken(string token)
+        {
+            activeTokens.Remove(token);
         }
     }
 }

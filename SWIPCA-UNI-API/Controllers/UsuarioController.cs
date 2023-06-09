@@ -49,6 +49,7 @@ namespace SWIPCA_UNI_API.Controllers
         [HttpPost("logout/{token}")]
         public async Task<IActionResult> Logout(string token)
         {
+            DA_Usuario.RemoveToken(token);
             await HttpContext.SignOutAsync();
             return RedirectToAction("Login");
         }
