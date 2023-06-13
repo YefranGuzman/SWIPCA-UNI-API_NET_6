@@ -24,7 +24,7 @@ namespace SWIPCA_UNI_API.DataAccess
             return listaDocentes;
         }
 
-        public async Task<List<string>> ObtenerDisponibilidadDocente(int idUsuario)
+        public async Task<List<DisponibilidadDTO>> ObtenerDisponibilidadDocente(int idUsuario)
         {
             var IdDocente = await (from a in db.Usuarios
                                    join b in db.Docentes
@@ -32,17 +32,22 @@ namespace SWIPCA_UNI_API.DataAccess
                                    where a.IdUsuario == idUsuario
                                    select b.IdDocente).FirstOrDefaultAsync();
 
-            var listarDisponibilidad = await (from a in db.Disponibilidads
-                                              where a.IdDocente == IdDocente
-                                              select $"{a.Fecha} {a.TipoJustificación} {a.Periodicidad} {a.Observacíon} {a.Evidencia}").ToListAsync();
+            var disponibilidadList = await (from a in db.Disponibilidads
+                                            where a.IdDocente == IdDocente
+                                            select new DisponibilidadDTO
+                                            {
+                                                Fecha = a.Fecha,
+                                                TipoJustificación = a.TipoJustificación,
+                                                Periodicidad = a.Periodicidad,
+                                                Observación = a.Observacíon,
+                                                Evidencia = a.Evidencia
+                                            }).ToListAsync();
 
-            return listarDisponibilidad;
+            return disponibilidadList;
         }
 
-        public async Task<List<string>> ObtenerAgendaDocente(int idUsuario)
+        public async Task<List<Disponibilidad2DTO>> ObtenerAgendaDocente(int idUsuario)
         {
-            
-
             var AgendaDocenteClases = await (from DC in db.Docentes
                                              join CS in db.Clases
                                              on DC.IdDocente equals CS.IdDocente
@@ -61,18 +66,29 @@ namespace SWIPCA_UNI_API.DataAccess
                                              join DIS in db.Disponibilidads
                                              on DC.IdDocente equals DIS.IdDocente
                                              where DC.IdDocente == idUsuario
-                                             select $"{DIS.Fecha}{DIS.Observacíon}"
+                                             select new Disponibilidad2DTO
+                                             {
+                                                 Fecha = DIS.Fecha,
+                                                 Observacion = DIS.Observacíon
+                                             }
                                         ).ToListAsync();
-            if (AgendaDocenteClases.Any())
-            {
+
                 return AgendaDocenteClases.ToList();
-            }
-            else
-            {
-                return new List<string>() { "No hay fechas u observaciones en la agenda del docente." };
-            }
+
         }
-        
+        public class DisponibilidadDTO
+        {
+            public DateTime Fecha { get; set; }
+            public int TipoJustificación { get; set; }
+            public int Periodicidad { get; set; }
+            public string? Observación { get; set; }
+            public string? Evidencia { get; set; }
+        }
+        public class Disponibilidad2DTO
+        {
+            public DateTime Fecha { get; set;}
+            public string? Observacion { get; set;}
+        }
     }
     /*
      El código define una clase DA_Docentes que tiene cuatro métodos asincrónicos 
