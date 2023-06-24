@@ -66,37 +66,47 @@ namespace SWIPCA_UNI_API.DataAccess
             cargaAcademica.Estado = 2;
             await db.SaveChangesAsync();
         }
-        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdUsuario, int IdTurno)
+        public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdUsuarioLogin, int idUsuarioObtener, string nombreturno)
         {
-            if (IdTurno == null) {
-                IdTurno = 0;//0 para Matutino, 1 para Vespertino y 2 para Nocturno
-            }
+            var obtenerturnos = await (from a in db.CargaAcademicas
+                                       join b in db.Grupos
+                                       on a.IdGrupo equals b.IdCarrera
+                                       join c in db.Turnos
+                                       on b.IdTurno equals c.IdTurno
+                                       where c.Nombre == nombreturno
+                                       select a.IdCaHo
+                                       ).ToListAsync();
 
-            var PRECargaAcademica = await (from carga in db.CargaAcademicas
-                                           join docente in db.Docentes on carga.IdDocente equals docente.IdDocente
-                                           join usuario in db.Usuarios on docente.IdUsuario equals usuario.IdUsuario
-                                           join clase in db.Clases on carga.IdClase equals clase.IdClase
-                                           join grupo in db.Grupos on carga.IdGrupo equals grupo.IdGrupo
-                                           join turno in db.Turnos on grupo.IdTurno equals turno.IdTurno
-                                           join asignatura in db.Asignaturas on clase.IdAsignatura equals asignatura.IdAsignatura
-                                           join carrera in db.Carreras on carga.IdCarrera equals carrera.IdCarrera
-                                           join facultad in db.Facultads on carrera.IdFacultad equals facultad.IdFacultad
-                                           join Aula_Lab in db.AulaLaboratorios on usuario.IdUsuario equals Aula_Lab.IdFacultad
-                                           where docente.IdUsuario == IdUsuario && carga.Estado == 0 && turno.IdTurno == IdTurno
-                                           group new { asignatura, turno } 
-                                           by new { carga.IdCaHo, grupo.Nombre, carga.Observacion, Aula = asignatura.Nombre, asignatura.Frecuencia } 
-                                           into g
-                                           select new CargaAcademicaDTO
-                                           {
-                                               IdCarga = g.Key.IdCaHo,
-                                               Asignatura = g.Key.Nombre,
-                                               Aula = g.Key.Aula,
-                                               Grupo = g.Key.Nombre,
-                                               Horario = g.ToDictionary(x => x.turno.Dia, x => x.turno.HoraInicio),
-                                               Frecuencia = g.Key.Frecuencia,
-                                               Observacion = g.Key.Observacion
-                                           }).ToListAsync();
-            return PRECargaAcademica;
+            var jefeACargo = await (from a in db.CargaAcademicas
+                                    join b in db.Departamentos
+                                    on a.IdJefe equals b.Jefe
+                                    where b.Jefe == IdUsuarioLogin
+                                    select a.IdJefe).FirstOrDefaultAsync();
+
+            var obtenerlistaAsignaturas = await(from a in db.Docentes
+                                                join b in db.Clases
+                                                on a.IdDocente equals b.IdDocente
+                                                select b.IdClase).ToListAsync();
+
+            var cargaAcademica = await (from a in db.CargaAcademicas
+                                        join b in db.Docentes
+                                        on a.IdDocente equals b.IdDocente
+                                        join c in db.Grupos
+                                        on a.IdGrupo equals c.IdGrupo
+                                        join d in db.Clases
+                                        on a.IdClase equals d.IdClase
+                                        join e in db.Asignaturas
+                                        on d.IdAsignatura equals e.IdAsignatura
+                                        where b.IdUsuario == idUsuarioObtener && a.IdJefe == jefeACargo && obtenerturnos.Contains(c.IdGrupo) && obtenerlistaAsignaturas.Contains(a.IdClase) && a.Estado == 0
+                                        select new CargaAcademicaDTO { 
+                                            IdCarga = a.IdCaHo,
+                                            Asignatura = e.Nombre,
+                                            Grupo = c.Nombre,
+                                            Horario = d.HoraInicio + " a " + d.HoraFinal,
+                                            Frecuencia = e.Frecuencia
+                                        }).ToListAsync();
+                                
+            return cargaAcademica;                    
         }
         public async Task GuardarCargaAcademica(CargaAcademica cargaAcademica)
         {
@@ -117,7 +127,7 @@ namespace SWIPCA_UNI_API.DataAccess
             public string Asignatura { get; set; }
             public string Aula { get; set; }
             public string Grupo { get; set; }
-            public Dictionary<string, TimeSpan> Horario { get; set; }
+            public string Horario { get; set; }
             public int Frecuencia { get; set; }
             public string Observacion { get; set; }
             public string ObservacionValidada => string.IsNullOrEmpty(Observacion) ? "Sin observaciones" : Observacion;
