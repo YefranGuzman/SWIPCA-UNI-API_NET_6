@@ -2,6 +2,7 @@
 using System.Linq;
 using SWIPCA_UNI_API.Models;
 using SWIPCA_UNI_API.Controllers;
+using System.Runtime.Intrinsics.Arm;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
@@ -49,27 +50,13 @@ namespace SWIPCA_UNI_API.DataAccess
         public async Task<List<Disponibilidad2DTO>> ObtenerAgendaDocente(int idUsuario)
         {
             var AgendaDocenteClases = await (from DC in db.Docentes
-                                             join CS in db.Clases
-                                             on DC.IdDocente equals CS.IdDocente
-                                             join AA in db.Asignaturas
-                                             on CS.IdAsignatura equals AA.IdAsignatura
-                                             join HS in db.Horarios
-                                             on CS.IdClase equals HS.IdClase
-                                             join GT in db.Grupos
-                                             on HS.IdGrupo equals GT.IdGrupo
-                                             join DP in db.Departamentos
-                                             on DC.IdDepartamento equals DP.IdDepartamento
-                                             join FT in db.Facultads
-                                             on DP.IdFacultad equals FT.IdFacultad
-                                             join AU in db.AulaLaboratorios
-                                             on FT.IdFacultad equals AU.IdFacultad
-                                             join DIS in db.Disponibilidads
-                                             on DC.IdDocente equals DIS.IdDocente
+                                             join DP in db.Disponibilidads
+                                             on DC.IdDocente equals DP.IdDocente
                                              where DC.IdDocente == idUsuario
                                              select new Disponibilidad2DTO
                                              {
-                                                 Fecha = DIS.Fecha,
-                                                 Observacion = DIS.Observacíon
+                                                 Fecha = DP.Fecha,
+                                                 Observacion = DP.Observacíon
                                              }
                                         ).ToListAsync();
 

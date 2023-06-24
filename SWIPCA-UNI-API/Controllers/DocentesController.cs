@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SWIPCA_UNI_API.DataAccess;
 using SWIPCA_UNI_API.Models;
+using static SWIPCA_UNI_API.DataAccess.DA_Docentes;
 
 namespace SWIPCA_UNI_API.Controllers
 {
@@ -9,10 +10,14 @@ namespace SWIPCA_UNI_API.Controllers
     [ApiController]
     public class DocentesController : ControllerBase
     {
-        private readonly DA_Usuario _Usuario;
         private readonly DA_Docentes _Docentes;
+
+        public DocentesController(DA_Usuario _Usuario, DA_Docentes _Docente)
+        {
+            _Docentes = _Docente;
+        }
         
-        [HttpGet("{idDepartamento}/{idFacultad}")]
+        [HttpGet("ObtenerDocente")]
         public async Task<ActionResult<List<string>>> ObtenerDocentes(int idDepartamento, int idFacultad)
         {
             var L_GOD = await _Docentes.ObtenerDocentes(idDepartamento, idFacultad);
@@ -20,22 +25,18 @@ namespace SWIPCA_UNI_API.Controllers
             return L_GOD;
         }
 
-        [HttpGet("{idDocente}/disponibilidad")]
-        public async Task<ActionResult<List<string>>> ObtenerDisponibilidadDocente(int idUsuario)
+        [HttpGet("/disponibilidad_docente")]
+        public async Task<ActionResult<List<DisponibilidadDTO>>> ObtenerDisponibilidadDocente(int idUsuario)
         {
-            var usuario = await _Usuario.ObtenerDocente(idUsuario);
-            var L_GODD = await _Docentes.ObtenerDisponibilidadDocente(usuario);
+            var L_GODD = await _Docentes.ObtenerDisponibilidadDocente(idUsuario);
 
             return L_GODD;
         }
 
-        [HttpGet("{idDocente}/carga-laboral")]
-
-        [HttpGet("{idDocente}/agenda")]
-        public async Task<ActionResult<List<string>>> ObtenerAgendaDocente(int idUsuario)
+        [HttpGet("/agenda_docente")]
+        public async Task<ActionResult<List<Disponibilidad2DTO>>> ObtenerAgendaDocente(int idUsuario)
         {
-            var usuario = await _Usuario.ObtenerDocente(idUsuario);
-            var L_GTAD = await _Docentes.ObtenerAgendaDocente(usuario);
+            var L_GTAD = await _Docentes.ObtenerAgendaDocente(idUsuario);
 
             return L_GTAD;
         }

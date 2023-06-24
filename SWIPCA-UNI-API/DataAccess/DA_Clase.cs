@@ -15,13 +15,6 @@ namespace SWIPCA_UNI_API.DataAccess
 
         public async Task<List<AgendaDTO>> ObtenerAgenda(int idUsuario)
         {
-            var cargo = await db.Docentes
-                .Where(a => a.IdUsuario == idUsuario)
-                .Join(db.Usuarios,
-                    a => a.IdUsuario,
-                    b => b.IdUsuario,
-                    (a, b) => b.IdUsuario)
-                .FirstOrDefaultAsync();
 
             var agenda = await (
                 from a in db.Clases
@@ -29,7 +22,7 @@ namespace SWIPCA_UNI_API.DataAccess
                 join c in db.Asignaturas on a.IdAsignatura equals c.IdAsignatura
                 join d in db.CargaAcademicas on b.IdDocente equals d.IdDocente
                 join e in db.Grupos on d.IdGrupo equals e.IdGrupo
-                where b.IdDocente == cargo
+                where b.IdUsuario == idUsuario
                 select new AgendaDTO
                 {
                     idClase = a.IdClase,

@@ -13,30 +13,30 @@ namespace SWIPCA_UNI_API.DataAccess
     {
         DbCargaAcademicaContext cn = new();
         private static List<string> activeTokens = new List<string>();
-        public async Task<int> ObtenerDocente(int idUsuario)
+        public async Task<Usuario> ObtenerDocente(int idUsuario)
+        {
+            var usuario = await (from a in cn.Usuarios
+                                 join b in cn.Docentes on a.IdUsuario equals b.IdDocente
+                                 where a.IdUsuario == idUsuario
+                                 select a).FirstOrDefaultAsync();
+
+            return usuario;
+        }
+        public async Task<Usuario> ObtenerJefeDepartamento(int idUsuario)
         {
             var usuario = await (from a in cn.Usuarios
                                  join b in cn.Departamentos on a.IdUsuario equals b.Jefe
                                  where a.IdUsuario == idUsuario
-                                 select b.Jefe).FirstOrDefaultAsync();
+                                 select a).FirstOrDefaultAsync();
 
             return usuario;
         }
-        public async Task<int> ObtenerJefeDepartamento(int idUsuario)
-        {
-            var usuario = await (from a in cn.Usuarios
-                                 join b in cn.Departamentos on a.IdUsuario equals b.Jefe
-                                 where a.IdUsuario == idUsuario
-                                 select b.Jefe).FirstOrDefaultAsync();
-
-            return usuario;
-        }
-        public async Task<int> ObtenerVicedecano(int idUsuario)
+        public async Task<Usuario> ObtenerVicedecano(int idUsuario)
         {
             var usuario = await (from a in cn.Usuarios
                                  join b in cn.Facultads on a.IdUsuario equals b.Vice
                                  where a.IdUsuario == idUsuario
-                                 select b.Vice).FirstOrDefaultAsync();
+                                 select a).FirstOrDefaultAsync();
 
             return usuario;
         }
@@ -52,9 +52,9 @@ namespace SWIPCA_UNI_API.DataAccess
         }
         public bool VerificarContrasena(Usuario usuario, string contrasena)
         {
-            string hashedPassword = HashPassword(contrasena); // Generar el hash de la contraseña ingresada
+            string hashedPassword = HashPassword(contrasena);
 
-            return usuario.PasswordHash == hashedPassword; // Comparar el hash almacenado con el hash generado
+            return usuario.PasswordHash == hashedPassword;
         }
         private string HashPassword(string contrasena)
         {

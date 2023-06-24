@@ -15,7 +15,7 @@ namespace SWIPCA_UNI_API.Controllers
         {
             DA_CargaAcademica = daCargaAcademica;
         }
-        [HttpPost]
+        [HttpPost("api/agregarCargaAcademica")]
         public async Task<IActionResult> AgregarCargaAcademica([FromBody] CargaAcademica cargaAcademica)
         {
             try
@@ -40,7 +40,7 @@ namespace SWIPCA_UNI_API.Controllers
                 }
             }
         }
-        [HttpPost("aprobar/{idCargaAcademica}")]
+        [HttpPost("api/aprobarCargaAcademica")]
         public async Task<IActionResult> CambiarEstadoCargaAcademicaAprobada(int idCargaAcademica)
         {
             try
@@ -61,7 +61,7 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(500, "Ocurrió un error interno en el servidor");
             }
         }
-        [HttpPost("denegar/{idCargaAcademica}")]
+        [HttpPost("api/denegarCargaAcademica")]
         public async Task<IActionResult> CambiarEstadoCargaAcademicaDenegada(int idCargaAcademica)
         {
             try
@@ -82,7 +82,7 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(500, "Ocurrió un error interno en el servidor");
             }
         }
-        [HttpGet("ObtenerCargas/{idDocente}")]
+        [HttpGet("api/ObtenerCargaAcademica")]
         public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int idUsuario, int IdTurno)
         {
             try
