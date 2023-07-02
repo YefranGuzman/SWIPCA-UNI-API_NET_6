@@ -1,12 +1,13 @@
 ﻿using System.Data;
 using SWIPCA_UNI_API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
     public class DA_Clase
     {
-        DbCargaAcademicaContext db = new DbCargaAcademicaContext();
+        DbCargaAcademicaContext db = new DbCargaAcademicaContext(); 
         public async Task<List<Clase>> ListarClases()
         {
             var Listarclases = await db.Clases.ToListAsync();

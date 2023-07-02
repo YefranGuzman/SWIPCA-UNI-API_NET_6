@@ -5,7 +5,7 @@ using static SWIPCA_UNI_API.DataAccess.DA_CargaAcademica;
 
 namespace SWIPCA_UNI_API.Controllers
 {
-    [Route("api/CargaAcademica")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CargaAcademicaController : Controller
     {
@@ -83,11 +83,11 @@ namespace SWIPCA_UNI_API.Controllers
             }
         }
         [HttpGet("/ObtenerCargaAcademica")]
-        public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int IdUsuarioLogin, int idUsuarioObtener, string nombreturno)
+        public async Task<ActionResult<List<CargaAcademicaDTO>>> getObtenerCargaAcademicaDocente(int IdUsuarioLogin, int idUsuarioObtener, string nombreturno)
         {
             try
             {
-                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(IdUsuarioLogin, idUsuarioObtener,nombreturno);
+                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(IdUsuarioLogin, idUsuarioObtener, nombreturno);
 
                 if (cargaAcademica == null)
                 {

@@ -83,10 +83,10 @@ namespace SWIPCA_UNI_API.DataAccess
                                     where b.Jefe == IdUsuarioLogin
                                     select a.IdJefe).FirstOrDefaultAsync();
 
-            var obtenerlistaAsignaturas = await(from a in db.Docentes
-                                                join b in db.Clases
-                                                on a.IdDocente equals b.IdDocente
-                                                select b.IdClase).ToListAsync();
+            var obtenerlistaAsignaturas = await (from a in db.Docentes
+                                                 join b in db.Clases
+                                                 on a.IdDocente equals b.IdDocente
+                                                 select b.IdClase).ToListAsync();
 
             var cargaAcademica = await (from a in db.CargaAcademicas
                                         join b in db.Docentes
@@ -97,13 +97,16 @@ namespace SWIPCA_UNI_API.DataAccess
                                         on a.IdClase equals d.IdClase
                                         join e in db.Asignaturas
                                         on d.IdAsignatura equals e.IdAsignatura
+                                        join f in db.Turnos
+                                        on c.IdTurno equals f.IdTurno
                                         where b.IdUsuario == idUsuarioObtener && a.IdJefe == jefeACargo && obtenerturnos.Contains(c.IdGrupo) && obtenerlistaAsignaturas.Contains(a.IdClase) && a.Estado == 0
                                         select new CargaAcademicaDTO { 
                                             IdCarga = a.IdCaHo,
                                             Asignatura = e.Nombre,
                                             Grupo = c.Nombre,
-                                            Horario = d.HoraInicio + " a " + d.HoraFinal,
-                                            Frecuencia = e.Frecuencia
+                                            Horario = d.HoraInicio + " a " + d.HoraFinal + " el dia " + f.Dia,
+                                            Frecuencia = e.Frecuencia,
+                                            Observacion = a.Observacion
                                         }).ToListAsync();
                                 
             return cargaAcademica;                    

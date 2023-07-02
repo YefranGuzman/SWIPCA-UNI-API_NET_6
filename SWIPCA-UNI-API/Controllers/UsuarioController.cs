@@ -7,25 +7,56 @@ using SWIPCA_UNI_API.DataAccess;
 using SWIPCA_UNI_API.Models; // Asumiendo que la clase 'Usuario' está en el espacio de nombres 'SWIPCA_UNI_API.Models'
 using System.Text;
 using System.Threading.Tasks;
-
+using static SWIPCA_UNI_API.DataAccess.DA_Usuario;
 
 namespace SWIPCA_UNI_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Usuario : ControllerBase
+    public class UsuarioController : ControllerBase
     {
 
         private readonly DA_Usuario _daUsuario;
-        private readonly DA_Usuario.JwtService _jwtService;
+        private readonly JwtService _jwtService;
         private readonly UserManager<Models.Usuario> _userManager;
         private readonly IConfiguration _config;
-        public Usuario(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Models.Usuario> userManager, IConfiguration config)
+        public UsuarioController(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Models.Usuario> userManager, IConfiguration config)
         {
             _daUsuario = daUsuario;
             _jwtService = jwtService;
             _userManager = userManager;
             _config = config;
+        }
+        [HttpGet("GetInformacionUsuario")]
+        public async Task<ActionResult<UsuarioI_DTO>> InformacionUsuario(int idUsuario)
+        {
+            try
+            {
+                var usuario = await _daUsuario.ObtenerInformacionUsuario(idUsuario);
+
+                if (usuario != null)
+                {
+                    return Ok(usuario);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+            catch(Exception)
+            {
+                return StatusCode(500, "Error en el servidor");
+            }
+        }
+        [HttpPost("PostNuevoUsuario")]
+        public async Task<ActionResult<Usuario>> PostCrearUsuario([FromBody] Usuario usuario)
+        {
+            var nuevoUsuario = await _daUsuario.AgregarUsuario(usuario);
+            return Ok();
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)

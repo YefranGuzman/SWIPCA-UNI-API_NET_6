@@ -3,6 +3,7 @@ using SWIPCA_UNI_API.Models;
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Intrinsics.Arm;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
@@ -35,29 +36,48 @@ namespace SWIPCA_UNI_API.DataAccess
 
             await cn.SaveChangesAsync();
         }
-        public async Task<List<AsignaturaDTO>> ListarAsignaturasPorDepartamento(int idDepartamento)
+        public async Task<ActionResult<List<AsignaturasDTO>>> AsignaturasDepartamento(int idUsuario)
         {
-            var listAsignaturasDpto = await (from AA in cn.Asignaturas
-                                             join PM in cn.Pensums on AA.IdAsignatura equals PM.IdAsignatura
-                                             join CR in cn.Carreras on PM.IdCarrera equals CR.IdCarrera
-                                             join FT in cn.Facultads on CR.IdFacultad equals FT.IdFacultad
-                                             join DP in cn.Departamentos on FT.IdFacultad equals DP.IdFacultad
-                                             join DR in cn.Duraccions on PM.IdDuraccion equals DR.IdDuraccion
-                                             where DP.IdDepartamento == idDepartamento
-                                             select new AsignaturaDTO
-                                             {
-                                                 Nombre = AA.Nombre,
-                                                 Anio = DR.Anio,
-                                                 Frecuencia = AA.Frecuencia
-                                             }).ToListAsync();
+            var obtenerdepartamento = await (from a in cn.Usuarios
+                                             join b in cn.Docentes
+                                             on a.IdUsuario equals b.IdUsuario
+                                             join c in cn.Departamentos
+                                             on b.IdDepartamento equals c.IdDepartamento
+                                             where a.IdUsuario == idUsuario
+                                             select c.IdDepartamento).FirstOrDefaultAsync();
 
-            return listAsignaturasDpto;
+            var obtenerfaculta = await (from a in cn.Facultads
+                                        join b in cn.Departamentos
+                                        on a.IdFacultad equals b.IdFacultad
+                                        where b.IdDepartamento == obtenerdepartamento
+                                        select a.IdFacultad).FirstOrDefaultAsync();
+
+            var obtenercarrera = await (from a in cn.Carreras
+                                        join b in cn.Facultads
+                                        on a.IdFacultad equals b.IdFacultad
+                                        where b.IdFacultad == obtenerfaculta
+                                        select a.IdCarrera).FirstOrDefaultAsync();
+
+            var obtenerAsignaturas = await (from a in cn.Asignaturas
+                                            join b in cn.Pensums
+                                            on a.IdAsignatura equals b.IdAsignatura
+                                            join c in cn.Carreras
+                                            on b.IdCarrera equals c.IdCarrera
+                                            where c.IdCarrera == obtenercarrera
+                                            select new AsignaturasDTO
+                                            {
+                                                idAsignatura = a.IdAsignatura,
+                                                nombreasignatura = a.Nombre,
+                                                frecuenciaasignatura = a.Frecuencia
+                                            }).ToListAsync();
+
+            return obtenerAsignaturas;
         }
-        public class AsignaturaDTO
+        public class AsignaturasDTO
         {
-            public string Nombre { get; set; }
-            public int Anio { get; set; }
-            public int Frecuencia { get; set; }
+            public int idAsignatura { get; set; }
+            public string nombreasignatura { get; set; }
+            public int frecuenciaasignatura { get; set; }
         }
     }
 }

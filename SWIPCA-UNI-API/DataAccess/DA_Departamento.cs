@@ -31,7 +31,6 @@ namespace SWIPCA_UNI_API.DataAccess
             return ListAsignaturasDocente;
 
         }
-
         public ActionResult ObtenerDepatamento(int IdDepartamento)
         {
             var empleados = from e in conexion.Departamentos
