@@ -445,6 +445,8 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasNoKey()
                 .ToTable("Pensum");
 
+            entity.Property(e => e.Departamento).HasColumnName("departamento");
+            entity.Property(e => e.Estado).HasColumnName("estado");
             entity.Property(e => e.IdAsignatura).HasColumnName("idAsignatura");
             entity.Property(e => e.IdCarrera).HasColumnName("idCarrera");
             entity.Property(e => e.IdDuraccion).HasColumnName("idDuraccion");
@@ -584,6 +586,10 @@ public partial class DbCargaAcademicaContext : DbContext
             entity.Property(e => e.TipoRol).HasColumnName("tipoRol");
             entity.Property(e => e.UserName).HasMaxLength(256);
 
+            entity.HasOne(d => d.TipoRolNavigation).WithMany(p => p.Usuarios)
+                .HasForeignKey(d => d.TipoRol)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_rol_usuario");
         });
 
         OnModelCreatingPartial(modelBuilder);

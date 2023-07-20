@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
@@ -131,7 +130,7 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return usuario.PasswordHash == hashedPassword;
         }
-        private string HashPassword(string contrasena)
+        private static string HashPassword(string contrasena)
         {
             using (var sha256 = SHA256.Create())
             {

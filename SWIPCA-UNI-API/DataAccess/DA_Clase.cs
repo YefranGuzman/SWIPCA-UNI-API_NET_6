@@ -8,12 +8,12 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Clase
     {
         DbCargaAcademicaContext db = new DbCargaAcademicaContext(); 
-        public async Task<List<Clase>> ListarClases()
+        public async Task<List<Clase>> ListarClases()   
         {
             var Listarclases = await db.Clases.ToListAsync();
+
             return Listarclases;            
         }
-
         public async Task<List<AgendaDTO>> ObtenerAgenda(int idUsuario)
         {
 
@@ -23,7 +23,7 @@ namespace SWIPCA_UNI_API.DataAccess
                 join c in db.Asignaturas on a.IdAsignatura equals c.IdAsignatura
                 join d in db.CargaAcademicas on b.IdDocente equals d.IdDocente
                 join e in db.Grupos on d.IdGrupo equals e.IdGrupo
-                where b.IdUsuario == idUsuario
+                where b.IdUsuario == idUsuario && d.Estado == 0
                 select new AgendaDTO
                 {
                     idClase = a.IdClase,
