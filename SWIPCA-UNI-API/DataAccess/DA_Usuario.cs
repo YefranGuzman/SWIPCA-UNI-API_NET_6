@@ -116,8 +116,8 @@ namespace SWIPCA_UNI_API.DataAccess
         }
         public async Task<Usuario> ObtenerPorNick(string Nick)
         {
-            var usuario = await cn.Usuarios.Include(u => u.TipoRol)
-                                    .FirstOrDefaultAsync(x => x.Nick == Nick);
+            var usuario = await cn.Usuarios.FirstOrDefaultAsync(x => x.Nick == Nick);
+
             if (usuario == null)
             {
                 throw new Exception("No se encontró ningún usuario con ese Nick.");

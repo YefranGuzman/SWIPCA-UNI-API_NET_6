@@ -11,18 +11,39 @@ namespace SWIPCA_UNI_API.DataAccess
    
         DbCargaAcademicaContext db = new DbCargaAcademicaContext();
 
-        public async Task<List<string>> ObtenerDocentes(int idDepartamento, int idFacultad)
+        public async Task<List<DocenteDTO>> ObtenerDocentes(int idUsuario)
         {
-            var listaDocentes = await (from a in db.Docentes
-                                       join b in db.Departamentos
-                                       on a.IdDepartamento equals b.IdDepartamento
-                                       join c in db.Usuarios
-                                       on a.IdUsuario equals c.IdUsuario
-                                       join f in db.Facultads
-                                       on b.IdFacultad equals f.IdFacultad
-                                       where b.IdDepartamento == idDepartamento && b.IdFacultad == idFacultad
-                                       select c.PrimerNombre + " " + c.SegundoNombre + " " + c.PrimerApellido + " " + c.SegundoApellido).ToListAsync();
-            return listaDocentes;
+            var obtenerDepartamento =  await (from a in db.Departamentos
+                                                     join b in db.Usuarios
+                                                     on a.Jefe equals b.IdUsuario
+                                                     where idUsuario == a.Jefe
+                                                     select new Departamento
+                                                     {
+                                                         IdDepartamento = a.IdDepartamento,
+                                                         Jefe = a.Jefe
+                                                     }).FirstOrDefaultAsync();
+
+            if(obtenerDepartamento == null)
+            {
+                throw new Exception("Este usuario no es jefe de departamento");
+            }
+            else
+            {
+                var usuariosPorDepartamento = await (from a in db.Departamentos
+                                                     join b in db.Docentes
+                                                     on a.IdDepartamento equals b.IdDepartamento
+                                                     join c in db.Usuarios 
+                                                     on b.IdUsuario equals c.IdUsuario
+                                                     where a.IdDepartamento == obtenerDepartamento.IdDepartamento
+                                                     select new DocenteDTO
+                                                     {
+                                                         idDocente = b.IdDocente,
+                                                         NombreDocente = c.UserName
+                                                     })
+                                                 .ToListAsync();
+
+                return usuariosPorDepartamento;
+            }
         }
 
         public async Task<List<DisponibilidadDTO>> ObtenerDisponibilidadDocente(int idUsuario)
@@ -75,6 +96,12 @@ namespace SWIPCA_UNI_API.DataAccess
         {
             public DateTime Fecha { get; set;}
             public string? Observacion { get; set;}
+        }
+
+        public class DocenteDTO
+        {
+            public int idDocente { get; set; }
+            public string NombreDocente { get;set; }
         }
     }
     /*

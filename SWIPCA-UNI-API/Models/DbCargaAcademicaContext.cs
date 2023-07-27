@@ -585,11 +585,6 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasColumnName("segundoNombre");
             entity.Property(e => e.TipoRol).HasColumnName("tipoRol");
             entity.Property(e => e.UserName).HasMaxLength(256);
-
-            entity.HasOne(d => d.TipoRolNavigation).WithMany(p => p.Usuarios)
-                .HasForeignKey(d => d.TipoRol)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_rol_usuario");
         });
 
         OnModelCreatingPartial(modelBuilder);
