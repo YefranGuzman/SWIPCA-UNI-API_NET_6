@@ -3,24 +3,69 @@ using SWIPCA_UNI_API.Models;
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Intrinsics.Arm;
+using Microsoft.AspNetCore.Mvc;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
     public class DA_Asignatura
     {
         DbCargaAcademicaContext cn = new DbCargaAcademicaContext();
-        public async Task<List<Asignatura>> ListarAsignaturas()
+        public async Task<List<Asignatura>> ListarAsignaturas(int idUsuario)
         {
-            var listaAsignaturas = await cn.Asignaturas
+            var rolUsuario = await (from a in cn.Usuarios
+                                    where a.IdUsuario == idUsuario
+                                    select a.TipoRol).FirstOrDefaultAsync();
+
+            if(rolUsuario == 4)
+            {
+                var listaAsignaturas = await cn.Asignaturas
                 .Select(a => new Asignatura
                 {
                     IdAsignatura = a.IdAsignatura,
                     Nombre = a.Nombre,
-                    Frecuencia = a.Frecuencia
+                    Frecuencia = a.Frecuencia,
+                    IdArea = a.IdArea
                 })
                 .ToListAsync();
 
-            return listaAsignaturas;
+                return listaAsignaturas;
+            }
+            if(rolUsuario == 3)
+            {
+                var obtenerdepartamento = await (from a in cn.Departamentos
+                                                 join b in cn.Usuarios
+                                                 on a.Jefe equals b.IdUsuario
+                                                 where a.Jefe == idUsuario
+                                                 select a.IdDepartamento).FirstOrDefaultAsync();
+
+                var obtenerfacultad = await(from a in cn.Departamentos
+                                            join b in cn.Facultads
+                                            on a.IdFacultad equals b.IdFacultad
+                                            where a.IdDepartamento == obtenerdepartamento
+                                            select a.IdFacultad).FirstOrDefaultAsync();
+
+                var obtenerpensum = await (from a in cn.Pensums
+                                           join b in cn.Carreras
+                                           on a.IdCarrera equals b.IdCarrera
+                                           where b.IdFacultad == obtenerfacultad
+                                           select a.IdAsignatura).ToListAsync();
+
+                var listarAsignaturas = await (from a in cn.Asignaturas
+                                               join b in cn.Pensums
+                                               on a.IdAsignatura equals b.IdAsignatura
+                                               where obtenerpensum.Contains(a.IdAsignatura)
+                                               select new Asignatura
+                                               {
+                                                   Nombre = a.Nombre,
+                                                   Credito = a.Credito,
+                                                   Frecuencia = a.Frecuencia
+                                               }).ToListAsync();
+
+                return listarAsignaturas;
+            } else
+            {
+                throw new Exception("Asignatura no encontrada");
+            }
         }
         public async Task ActualizarAsignatura(Asignatura ModelAsignatura)
         {
@@ -35,29 +80,48 @@ namespace SWIPCA_UNI_API.DataAccess
 
             await cn.SaveChangesAsync();
         }
-        public async Task<List<AsignaturaDTO>> ListarAsignaturasPorDepartamento(int idDepartamento)
+        public async Task<ActionResult<List<AsignaturasDTO>>> AsignaturasDepartamento(int idUsuario)
         {
-            var listAsignaturasDpto = await (from AA in cn.Asignaturas
-                                             join PM in cn.Pensums on AA.IdAsignatura equals PM.IdAsignatura
-                                             join CR in cn.Carreras on PM.IdCarrera equals CR.IdCarrera
-                                             join FT in cn.Facultads on CR.IdFacultad equals FT.IdFacultad
-                                             join DP in cn.Departamentos on FT.IdFacultad equals DP.IdFacultad
-                                             join DR in cn.Duraccions on PM.IdDuraccion equals DR.IdDuraccion
-                                             where DP.IdDepartamento == idDepartamento
-                                             select new AsignaturaDTO
-                                             {
-                                                 Nombre = AA.Nombre,
-                                                 Anio = DR.Anio,
-                                                 Frecuencia = AA.Frecuencia
-                                             }).ToListAsync();
+            var obtenerdepartamento = await (from a in cn.Usuarios
+                                             join b in cn.Docentes
+                                             on a.IdUsuario equals b.IdUsuario
+                                             join c in cn.Departamentos
+                                             on b.IdDepartamento equals c.IdDepartamento
+                                             where a.IdUsuario == idUsuario
+                                             select c.IdDepartamento).FirstOrDefaultAsync();
 
-            return listAsignaturasDpto;
+            var obtenerfaculta = await (from a in cn.Facultads
+                                        join b in cn.Departamentos
+                                        on a.IdFacultad equals b.IdFacultad
+                                        where b.IdDepartamento == obtenerdepartamento
+                                        select a.IdFacultad).FirstOrDefaultAsync();
+
+            var obtenercarrera = await (from a in cn.Carreras
+                                        join b in cn.Facultads
+                                        on a.IdFacultad equals b.IdFacultad
+                                        where b.IdFacultad == obtenerfaculta
+                                        select a.IdCarrera).FirstOrDefaultAsync();
+
+            var obtenerAsignaturas = await (from a in cn.Asignaturas
+                                            join b in cn.Pensums
+                                            on a.IdAsignatura equals b.IdAsignatura
+                                            join c in cn.Carreras
+                                            on b.IdCarrera equals c.IdCarrera
+                                            where c.IdCarrera == obtenercarrera
+                                            select new AsignaturasDTO
+                                            {
+                                                idAsignatura = a.IdAsignatura,
+                                                nombreasignatura = a.Nombre,
+                                                frecuenciaasignatura = a.Frecuencia
+                                            }).ToListAsync();
+
+            return obtenerAsignaturas;
         }
-        public class AsignaturaDTO
+        public class AsignaturasDTO
         {
-            public string Nombre { get; set; }
-            public int Anio { get; set; }
-            public int Frecuencia { get; set; }
+            public int idAsignatura { get; set; }
+            public string nombreasignatura { get; set; }
+            public int frecuenciaasignatura { get; set; }
         }
     }
 }

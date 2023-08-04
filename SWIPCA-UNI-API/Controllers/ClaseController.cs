@@ -9,19 +9,26 @@ namespace SWIPCA_UNI_API.Controllers
     [ApiController]
     public class ClaseController : Controller
     {
-        [HttpGet("listar")]
-        public async Task<ActionResult<List<Clase>>> Get()
+        private readonly DA_Clase DA_Clase;
+        private readonly DA_Asignatura DA_Asignatura;
+
+
+        public ClaseController(DA_Clase _clase, DA_Asignatura _asignatura)
         {
-            var clase = new DA_Clase();
-            var ListaClase = await clase.ListarClases();
+            DA_Clase = _clase;
+            DA_Asignatura = _asignatura;
+        }
+        [HttpGet("listar")]
+        public async Task<ActionResult<List<Clase>>> GetListarClases()
+        {
+            var ListaClase = await DA_Clase.ListarClases();
 
             return (ListaClase);
         }
         [HttpGet("agenda")]
         public async Task<List<AgendaDTO>> GetAgendaDTOs(int idUsuario)
         {
-            var agenda = new DA_Clase();
-            var ListarAgendaDTO = await agenda.ObtenerAgenda(idUsuario);
+            var ListarAgendaDTO = await DA_Clase.ObtenerAgenda(idUsuario);
 
             return (ListarAgendaDTO);
         }
