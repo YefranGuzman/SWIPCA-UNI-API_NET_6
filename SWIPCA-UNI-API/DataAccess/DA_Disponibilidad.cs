@@ -8,16 +8,23 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Disponibilidad
     {
         DbCargaAcademicaContext db = new DbCargaAcademicaContext();
-        public async Task<string> GuardarDisponibilidadDocente(int IdDocente, string Observacion, int Periodo, string Evidencia, int Estado, int TipoJustificacion)
+        public async Task<string> GuardarDisponibilidadDocente(int IdUsuario, string Observacion, int Periodo, string Evidencia, int Estado, int TipoJustificacion)
         {
-            if (IdDocente == 0)
+            if (IdUsuario == 0)
+            {
+                return "El Id del usuario no puede venir vacio";
+            }
+
+            var obtenerdocente = await db.Docentes.FirstOrDefaultAsync(a => a.IdUsuario == IdUsuario);
+
+            if (obtenerdocente == null)
             {
                 return "El Id del docente no puede venir vacio";
             }
 
             var save = new Disponibilidad
             {
-                IdDocente = IdDocente,
+                IdDocente = obtenerdocente.IdDocente,
                 Observacíon = Observacion,
                 Fecha = DateTime.Now,
                 Periodicidad = Periodo,
@@ -31,20 +38,19 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return "Disponibilidad guardada exitosamente";
         }
-        public async Task<List<Disponibilidad>> ObtenerDisponibilidadesPorEstado(int idUsuario)
+        public async Task<List<SolicitudDisponibilidadDTO>> ObtenerDisponibilidades(int idUsuario)
         {
-            var rol = await (from a in db.Usuarios
-                                   join b in db.Docentes
-                                   on a.IdUsuario equals b.IdUsuario
-                                   where a.IdUsuario == idUsuario
-                                   select a.TipoRol).FirstAsync();
+         
+            var rolUsuario = await (from a in db.Usuarios
+                                    where a.IdUsuario == idUsuario
+                                    select a.TipoRol).FirstOrDefaultAsync();
 
-            if(rol == 0)
+            if (rolUsuario == 0)
             {
                 throw new Exception("Este usuario no cuenta con rol asignado");
             }
 
-            if(rol == 2)
+            if(rolUsuario == 2)
             {
                 var obtenerdocente = await db.Docentes.FirstOrDefaultAsync(a => a.IdUsuario == idUsuario);
 
@@ -53,16 +59,32 @@ namespace SWIPCA_UNI_API.DataAccess
                     throw new Exception("Este usuario no cumple con ningun docente");
                 }
 
-                var disponibilidades = await db.Disponibilidads
-                .Include(d => d.IdDocenteNavigation)
-                .Where(d => d.IdDocente == obtenerdocente.IdUsuario)
-                .ToListAsync();
+                var disponibilidades = await (from a in db.Disponibilidads
+                                              join b in db.Docentes
+                                              on a.IdDocente equals b.IdDocente
+                                              join c in db.Usuarios
+                                              on b.IdUsuario equals c.IdUsuario
+                                              where b.IdUsuario == obtenerdocente.IdUsuario
+                                              select new SolicitudDisponibilidadDTO
+                                              {
+                                                  Docente = c.UserName,
+                                                  Fecha = a.Fecha,
+                                                  TipoJustificacion = a.TipoJustificación,
+                                                  Estado = a.Estado,
+                                                  Periodo = a.Periodicidad,
+                                                  Razon = a.Observacíon,
+                                                  Evidencia = a.Evidencia
+                                              }).ToListAsync();
+                                               
+
                 if (disponibilidades.Count == 0)
                 {
-                    return new List<Disponibilidad>() { new Disponibilidad() { Observacíon = "No se encontraron disponibilidades activas." } };
+                    return new List<SolicitudDisponibilidadDTO>() { new SolicitudDisponibilidadDTO() { Razon = "No se encontraron disponibilidades activas." } };
                 }
 
-            }if (rol == 3)
+                return disponibilidades;
+
+            }if (rolUsuario == 3)
             {
                 var departamentoJefe = await db.Departamentos
                                         .FirstOrDefaultAsync(a => a.Jefe == idUsuario);
@@ -72,51 +94,36 @@ namespace SWIPCA_UNI_API.DataAccess
                     throw new Exception("Este usuario no es jefe de departamento");
                 }
 
-                var disponibilidades = await db.Disponibilidads
-                    .Include(d => d.IdDocenteNavigation)
-                    .Where(d => d.IdDocenteNavigation.IdDepartamento == departamentoJefe.IdDepartamento)
-                    .ToListAsync();
+                var disponibilidades = await (from a in db.Disponibilidads
+                                              join b in db.Docentes
+                                              on a.IdDocente equals b.IdDocente
+                                              join c in db.Usuarios
+                                              on b.IdUsuario equals c.IdUsuario
+                                              join d in db.Departamentos
+                                              on b.IdDepartamento equals d.IdDepartamento
+                                              where d.IdDepartamento == departamentoJefe.IdDepartamento
+                                              select new SolicitudDisponibilidadDTO
+                                              {
+                                                  Docente = c.UserName,
+                                                  Fecha = a.Fecha,
+                                                  TipoJustificacion = a.TipoJustificación,
+                                                  Estado = a.Estado,
+                                                  Periodo = a.Periodicidad,
+                                                  Razon = a.Observacíon,
+                                                  Evidencia = a.Evidencia
+                                              }).ToListAsync();
+
 
                 if (disponibilidades.Count == 0)
                 {
                     // Puedes devolver una lista con una disponibilidad ficticia indicando que no se encontraron disponibilidades.
-                    return new List<Disponibilidad>() { new Disponibilidad() { Observacíon = "No se encontraron disponibilidades activas." } };
+                    return new List<SolicitudDisponibilidadDTO>() { new SolicitudDisponibilidadDTO() { Razon = "No se encontraron disponibilidades activas." } };
                 }
 
                 return disponibilidades;
             }
 
             throw new Exception("Disponibilidad no corresponde");
-        }
-        public async Task<List<Disponibilidad>> ObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDocente)
-        {
-            int Estado = 1;
-
-            var DepartamentoJefe = await (from dpto in db.Departamentos
-                                          join doc in db.Docentes
-                                          on dpto.Jefe equals doc.IdDocente
-                                          where doc.IdDocente.Equals(idDocente)
-                                          select doc.IdDocente).FirstOrDefaultAsync();
-
-            var CargaAcademica = await (from C_Academica in db.CargaAcademicas
-                                        join doc in db.Docentes
-                                        on C_Academica.IdDocente equals doc.IdDocente
-                                        join Dpto in db.Departamentos
-                                        on C_Academica.IdJefe equals Dpto.Jefe
-                                        where C_Academica.IdJefe == DepartamentoJefe
-                                        select C_Academica.IdDocente).ToListAsync();
-
-            var disponibilidades = await db.Disponibilidads
-                .Include(d => d.IdDocenteNavigation)
-                .Where(d => CargaAcademica.Contains(d.IdDocente) && d.Estado.Equals(Estado))
-                .ToListAsync();
-
-            if (disponibilidades.Count == 1)
-            {
-                throw new Exception("Todos los docentes tienen disponibilidad de Tiempo");
-            }
-
-            return disponibilidades;
         }
         public async Task<List<SolicitudDisponibilidadDTO>> AprobarDisponibilidades(int idJefe)
         {
@@ -169,7 +176,7 @@ namespace SWIPCA_UNI_API.DataAccess
             public int Estado { get; set; }
             public int Periodo { get; set; }
             public string Razon { get; set; }
-            public string Evidencia { get; set;}
+            public string? Evidencia { get; set;}
         }
     }
 }

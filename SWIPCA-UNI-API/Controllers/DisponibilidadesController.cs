@@ -38,15 +38,15 @@ namespace SWIPCA_UNI_API.Controllers
             }
         }
 
-        [HttpGet("GetObtenerDisponibilidadesPorEstado")]
-        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidadesPorEstado(int idUsuario)
+        [HttpGet("GetObtenerDisponibilidades")]
+        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidades(int idUsuario)
         {
             if (idUsuario <= 0)
             {
                 return BadRequest("El id del docente no es válido.");
             }
 
-            var result = await disponibilidad.ObtenerDisponibilidadesPorEstado(idUsuario);
+            var result = await disponibilidad.ObtenerDisponibilidades(idUsuario);
 
             if (result == null || !result.Any())
             {
@@ -56,22 +56,6 @@ namespace SWIPCA_UNI_API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("departamento/{idDepartamento}")]
-        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDepartamento)
-        {
-            if (idDepartamento <= 0)
-            {
-                return BadRequest("El id del departamento no es válido.");
-            }
-
-            var result = await disponibilidad.ObtenerDisponibilidadesTodosDocentesPorDepartamento(idDepartamento);
-
-            if (result == null || !result.Any())
-            {
-                return NotFound("No se encontraron disponibilidades para los docentes del departamento especificado.");
-            }
-            return Ok(result);
-        }
         [HttpGet("departamento")]
         public async Task<ActionResult<List<DA_Disponibilidad.SolicitudDisponibilidadDTO>>> AprobarDisponibilidadesPorDepartamento(int IdUsuario) 
         {
