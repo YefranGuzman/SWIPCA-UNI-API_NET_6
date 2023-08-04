@@ -10,33 +10,32 @@ namespace SWIPCA_UNI_API.DataAccess
         DbCargaAcademicaContext db = new DbCargaAcademicaContext();
         public async Task<string> GuardarDisponibilidadDocente(int IdUsuario, string Observacion, int Periodo, string Evidencia, int Estado, int TipoJustificacion)
         {
+            var obtenerdocente = await db.Docentes.FirstOrDefaultAsync(a => a.IdUsuario == IdUsuario);
+
             if (IdUsuario == 0)
             {
                 return "El Id del usuario no puede venir vacio";
             }
 
-            var obtenerdocente = await db.Docentes.FirstOrDefaultAsync(a => a.IdUsuario == IdUsuario);
-
-            if (obtenerdocente == null)
+            if (obtenerdocente.IdDocente != null)
             {
-                return "El Id del docente no puede venir vacio";
+                var save = new Disponibilidad
+                {
+                    IdDocente = obtenerdocente.IdDocente,
+                    Observacíon = Observacion,
+                    Fecha = DateTime.Now,
+                    Periodicidad = Periodo,
+                    Evidencia = Evidencia,
+                    Estado = Estado,
+                    TipoJustificación = TipoJustificacion
+                };
+
+                db.Disponibilidads.Add(save);
+                await db.SaveChangesAsync();
+
+                return "Disponibilidad guardada exitosamente";
             }
-
-            var save = new Disponibilidad
-            {
-                IdDocente = obtenerdocente.IdDocente,
-                Observacíon = Observacion,
-                Fecha = DateTime.Now,
-                Periodicidad = Periodo,
-                Evidencia = Evidencia,
-                Estado = Estado,
-                TipoJustificación = TipoJustificacion
-            };
-
-            db.Disponibilidads.Add(save);
-            await db.SaveChangesAsync();
-
-            return "Disponibilidad guardada exitosamente";
+            return "El Id del docente no puede venir vacio";
         }
         public async Task<List<SolicitudDisponibilidadDTO>> ObtenerDisponibilidades(int idUsuario)
         {
@@ -153,16 +152,18 @@ namespace SWIPCA_UNI_API.DataAccess
                                               }).ToListAsync();
             return docentesdispobilidad;
         }
-        public async Task<bool> ActualizarEstadoSolicitudDisponibilidad(int idSolicitud, int nuevoEstado)
+        public async Task<bool> ActualizarEstadoSolicitudDisponibilidad(int IdUsuario, int IdSolicitud ,int NuevoEstado)
         {
-            var solicitud = await db.Disponibilidads.FindAsync(idSolicitud);
+
+
+            var solicitud = await db.Disponibilidads.FirstAsync(a => a.IdDisponibilidad == IdSolicitud);
 
             if (solicitud == null)
             {
                 throw new ArgumentException("La solicitud de disponibilidad no existe");
             }
 
-            solicitud.Estado = nuevoEstado;
+            solicitud.Estado = NuevoEstado;
             await db.SaveChangesAsync();
 
             return true;

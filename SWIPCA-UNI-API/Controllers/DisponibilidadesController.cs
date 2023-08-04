@@ -17,12 +17,11 @@ namespace SWIPCA_UNI_API.Controllers
             disponibilidad = daDisponibilidad;
             Usuarios = dA_Usuario?? new DA_Usuario();
         }
-        
 
-        [HttpPut("Disponibilidad/PutGuardarDisponibilidadDocente")]
-        public async Task<IActionResult> PutGuardarDisponibilidadDocente(int idDocente, string observacion, int periodo, string evidencia, int estado, int tipoJustificacion)
+        [HttpPost("PostGuardarDisponibilidadDocente")]
+        public async Task<IActionResult> GetGuardarDisponibilidadDocente(int IdUsuario, string observacion, int periodo, string evidencia, int estado, int tipoJustificacion)
         {
-            var result = await disponibilidad.GuardarDisponibilidadDocente(idDocente, observacion, periodo, evidencia, estado, tipoJustificacion);
+            var result = await disponibilidad.GuardarDisponibilidadDocente(IdUsuario, observacion, periodo, evidencia, estado, tipoJustificacion);
 
             if (result == "El Id del docente no puede venir vacio")
             {
@@ -56,24 +55,42 @@ namespace SWIPCA_UNI_API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("departamento")]
-        public async Task<ActionResult<List<DA_Disponibilidad.SolicitudDisponibilidadDTO>>> AprobarDisponibilidadesPorDepartamento(int IdUsuario) 
+        [HttpPut("PutAprobarDisponibilidad")]
+        public async Task<ActionResult<List<DA_Disponibilidad.SolicitudDisponibilidadDTO>>> AprobarDisponibilidadesPorDepartamento(int IdUsuario, int IdSolicitud) 
         {
-            var Result = await disponibilidad.AprobarDisponibilidades(IdUsuario);
+            int NuevoEstado = 2;
 
-            if (Result == null || !Result.Any())
+            var Result = await disponibilidad.ActualizarEstadoSolicitudDisponibilidad(IdUsuario, IdSolicitud ,NuevoEstado);
+
+            if (Result == null)
             {
                 return NotFound("No se encuentra ninguna solicitud actualmente");
             }
             return Ok(Result);
         }
-        [HttpPost]
-        public async Task<bool> CambiarEstadoSolicitudDisponibilidad(int idSolicitud, int nuevoEstado)
+        [HttpPost("PostActualizarSolicitud")]
+        public async Task<ActionResult<string>> CambiarEstadoSolicitudDisponibilidad(int idUsuario, int idSolicitud, int nuevoEstado)
         {
-            await disponibilidad.ActualizarEstadoSolicitudDisponibilidad(idSolicitud, nuevoEstado);
+            if (nuevoEstado == 1 || nuevoEstado == 3)
+            {
+                await disponibilidad.ActualizarEstadoSolicitudDisponibilidad(idUsuario, idSolicitud, nuevoEstado);
 
-            return true;
+                if (nuevoEstado == 1)
+                {
+                    return Ok("La petición se encuentra en proceso."); // 200 OK - Peticion en proceso
+                }
+                else
+                {
+                    return StatusCode(210, "La petición ha sido rechazada."); // 210 - Código de estado personalizado para rechazo
+                }
+            }
+            else if (nuevoEstado == 2)
+            {
+                await disponibilidad.ActualizarEstadoSolicitudDisponibilidad(idUsuario, idSolicitud, nuevoEstado);
+                return Ok("La Peticion ha sido aprobada"); // 200 No Content - Aprobada
+            }
+
+            return BadRequest("Operacion inválido");
         }
-
     }
 }
