@@ -13,9 +13,9 @@ public partial class Horario
 
     public int IdGrupo { get; set; }
 
-    public virtual Carrera IdCarreraNavigation { get; set; } = null!;
+    public virtual Carrera IdCarreraNavigation { get; set; }
 
-    public virtual Clase IdClaseNavigation { get; set; } = null!;
+    public virtual Clase IdClaseNavigation { get; set; }
 
-    public virtual Grupo IdGrupoNavigation { get; set; } = null!;
+    public virtual Grupo IdGrupoNavigation { get; set; }
 }

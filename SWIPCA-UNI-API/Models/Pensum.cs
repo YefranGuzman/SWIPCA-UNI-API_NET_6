@@ -11,6 +11,10 @@ public partial class Pensum
 
     public int IdDuraccion { get; set; }
 
+    public int? Estado { get; set; }
+
+    public int? Departamento { get; set; }
+
     public virtual Asignatura IdAsignaturaNavigation { get; set; } = null!;
 
     public virtual Carrera IdCarreraNavigation { get; set; } = null!;

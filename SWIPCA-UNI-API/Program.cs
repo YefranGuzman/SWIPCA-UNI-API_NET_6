@@ -34,16 +34,27 @@ builder.Services.AddIdentity<Usuario, IdentityRole<int>>(options =>
 
 // Agregar servicios DI
 builder.Services.AddScoped<DA_Usuario>();
+builder.Services.AddScoped<DA_Turno>();
 builder.Services.AddScoped<DA_Grupo>();
+builder.Services.AddScoped<DA_Carrera>();
 builder.Services.AddScoped<DA_Docentes>();
 builder.Services.AddScoped<DA_Disponibilidad>();
 builder.Services.AddScoped<DA_Clase>();
-builder.Services.AddScoped<DA_Carrera>();
 builder.Services.AddScoped<DA_CargaAcademica>();
 builder.Services.AddScoped<DA_Aula>();
 builder.Services.AddScoped<DA_Asignatura>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<UserManager<Usuario>>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:58603", "http://localhost:4200")
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -52,6 +63,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors();
 }
 
 app.UseHttpsRedirection();
