@@ -32,5 +32,12 @@ namespace SWIPCA_UNI_API.Controllers
 
             return (ListarAgendaDTO);
         }
+        [HttpPost("PostAgregarClase")]
+        public async Task<ActionResult<Clase>> PostAgregarClase(int idAsignatura, int idDocente, TimeSpan HoraInicio, TimeSpan HoraFinal, string Dia)
+        {
+            var AgregarClase = await DA_Clase.AgregarClase(idAsignatura,idDocente,HoraInicio,HoraFinal,Dia);
+
+            return (AgregarClase);
+        }
     }
 }
