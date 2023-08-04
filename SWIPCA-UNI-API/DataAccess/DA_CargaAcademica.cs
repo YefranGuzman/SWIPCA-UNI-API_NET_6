@@ -72,6 +72,11 @@ namespace SWIPCA_UNI_API.DataAccess
                                     where a.IdUsuario == IdUsuarioLogin
                                     select a.TipoRol).FirstOrDefaultAsync();
 
+            if(rolUsuario == 0)
+            {
+                throw new InvalidOperationException("El rol esta incorrecto o no esta asociado");
+            }
+
             var obtenerturnos = await (from a in db.CargaAcademicas
                                        join b in db.Grupos
                                        on a.IdGrupo equals b.IdCarrera
@@ -80,12 +85,20 @@ namespace SWIPCA_UNI_API.DataAccess
                                        where c.Nombre == nombreturno
                                        select a.IdCaHo
                                        ).ToListAsync();
+            if(obtenerturnos == null)
+            {
+                throw new ArgumentException("No tiene turnos asociados");
+            }
 
             var jefeACargo = await (from a in db.CargaAcademicas
                                     join b in db.Departamentos
                                     on a.IdJefe equals b.Jefe
                                     where b.Jefe == IdUsuarioLogin
                                     select a.IdJefe).FirstOrDefaultAsync();
+            if(jefeACargo == 0)
+            {
+                throw new Exception("Jefe no encontrado");
+            }
 
             var obtenerlistaAsignaturas = await (from a in db.Docentes
                                                  join b in db.Clases
@@ -120,13 +133,11 @@ namespace SWIPCA_UNI_API.DataAccess
 
             }if (rolUsuario == 3)
             {
-                var obtenerdepartamento = await (from a in db.Usuarios
-                                                 join b in db.Docentes
-                                                 on a.IdUsuario equals b.IdUsuario
-                                                 join c in db.Departamentos
-                                                 on b.IdDepartamento equals c.IdDepartamento
-                                                 where a.IdUsuario == IdUsuarioLogin
-                                                 select c.IdDepartamento).FirstAsync();
+                var obtenerdepartamento = await (from a in db.Departamentos
+                                                 join b in db.Usuarios
+                                                 on a.Jefe equals b.IdUsuario
+                                                 where a.Jefe == jefeACargo
+                                                 select a.IdDepartamento).FirstAsync();
 
                 var cargaAcademica = await (from a in db.CargaAcademicas
                                             join b in db.Docentes

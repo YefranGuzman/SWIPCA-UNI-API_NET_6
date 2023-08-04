@@ -31,19 +31,62 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return "Disponibilidad guardada exitosamente";
         }
-        public async Task<List<Disponibilidad>> ObtenerDisponibilidadesPorEstado(int idDocente)
+        public async Task<List<Disponibilidad>> ObtenerDisponibilidadesPorEstado(int idUsuario)
         {
-            int Estado = 0;
-            var disponibilidades = await db.Disponibilidads
-                .Include(d => d.IdDocenteNavigation)
-                .Where(d => d.IdDocente == idDocente && d.Estado.Equals(Estado))
-                .ToListAsync();
-            if(disponibilidades.Count == 0)
+            var rol = await (from a in db.Usuarios
+                                   join b in db.Docentes
+                                   on a.IdUsuario equals b.IdUsuario
+                                   where a.IdUsuario == idUsuario
+                                   select a.TipoRol).FirstAsync();
+
+            if(rol == 0)
             {
-                return new List<Disponibilidad>() { new Disponibilidad() { Observacíon = "No se encontraron disponibilidades activas." } };
+                throw new Exception("Este usuario no cuenta con rol asignado");
             }
 
-            return disponibilidades;
+            if(rol == 2)
+            {
+                var obtenerdocente = await db.Docentes.FirstOrDefaultAsync(a => a.IdUsuario == idUsuario);
+
+                if (obtenerdocente == null)
+                {
+                    throw new Exception("Este usuario no cumple con ningun docente");
+                }
+
+                var disponibilidades = await db.Disponibilidads
+                .Include(d => d.IdDocenteNavigation)
+                .Where(d => d.IdDocente == obtenerdocente.IdUsuario)
+                .ToListAsync();
+                if (disponibilidades.Count == 0)
+                {
+                    return new List<Disponibilidad>() { new Disponibilidad() { Observacíon = "No se encontraron disponibilidades activas." } };
+                }
+
+            }if (rol == 3)
+            {
+                var departamentoJefe = await db.Departamentos
+                                        .FirstOrDefaultAsync(a => a.Jefe == idUsuario);
+
+                if (departamentoJefe == null)
+                {
+                    throw new Exception("Este usuario no es jefe de departamento");
+                }
+
+                var disponibilidades = await db.Disponibilidads
+                    .Include(d => d.IdDocenteNavigation)
+                    .Where(d => d.IdDocenteNavigation.IdDepartamento == departamentoJefe.IdDepartamento)
+                    .ToListAsync();
+
+                if (disponibilidades.Count == 0)
+                {
+                    // Puedes devolver una lista con una disponibilidad ficticia indicando que no se encontraron disponibilidades.
+                    return new List<Disponibilidad>() { new Disponibilidad() { Observacíon = "No se encontraron disponibilidades activas." } };
+                }
+
+                return disponibilidades;
+            }
+
+            throw new Exception("Disponibilidad no corresponde");
         }
         public async Task<List<Disponibilidad>> ObtenerDisponibilidadesTodosDocentesPorDepartamento(int idDocente)
         {

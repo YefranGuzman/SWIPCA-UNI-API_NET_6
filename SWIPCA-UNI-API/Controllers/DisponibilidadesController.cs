@@ -19,7 +19,7 @@ namespace SWIPCA_UNI_API.Controllers
         }
         
 
-        [HttpPut("{idDocente}/{observacion}/{periodo}/{evidencia}/{estado}/{tipoJustificacion}")]
+        [HttpPut("Disponibilidad/PutGuardarDisponibilidadDocente")]
         public async Task<IActionResult> PutGuardarDisponibilidadDocente(int idDocente, string observacion, int periodo, string evidencia, int estado, int tipoJustificacion)
         {
             var result = await disponibilidad.GuardarDisponibilidadDocente(idDocente, observacion, periodo, evidencia, estado, tipoJustificacion);
@@ -38,15 +38,15 @@ namespace SWIPCA_UNI_API.Controllers
             }
         }
 
-        [HttpGet("docente/{idDocente}")]
-        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidadesPorEstado(int idDocente)
+        [HttpGet("GetObtenerDisponibilidadesPorEstado")]
+        public async Task<ActionResult<List<Disponibilidad>>> GetObtenerDisponibilidadesPorEstado(int idUsuario)
         {
-            if (idDocente <= 0)
+            if (idUsuario <= 0)
             {
                 return BadRequest("El id del docente no es válido.");
             }
 
-            var result = await disponibilidad.ObtenerDisponibilidadesPorEstado(idDocente);
+            var result = await disponibilidad.ObtenerDisponibilidadesPorEstado(idUsuario);
 
             if (result == null || !result.Any())
             {
