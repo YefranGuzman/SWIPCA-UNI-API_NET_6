@@ -2,6 +2,7 @@
 using System.Linq;
 using SWIPCA_UNI_API.Models;
 using SWIPCA_UNI_API.Controllers;
+using System.Runtime.Intrinsics.Arm;
 
 namespace SWIPCA_UNI_API.DataAccess
 {
@@ -10,21 +11,42 @@ namespace SWIPCA_UNI_API.DataAccess
    
         DbCargaAcademicaContext db = new DbCargaAcademicaContext();
 
-        public async Task<List<string>> ObtenerDocentes(int idDepartamento, int idFacultad)
+        public async Task<List<DocenteDTO>> ObtenerDocentes(int idUsuario)
         {
-            var listaDocentes = await (from a in db.Docentes
-                                       join b in db.Departamentos
-                                       on a.IdDepartamento equals b.IdDepartamento
-                                       join c in db.Usuarios
-                                       on a.IdUsuario equals c.IdUsuario
-                                       join f in db.Facultads
-                                       on b.IdFacultad equals f.IdFacultad
-                                       where b.IdDepartamento == idDepartamento && b.IdFacultad == idFacultad
-                                       select c.PrimerNombre + " " + c.SegundoNombre + " " + c.PrimerApellido + " " + c.SegundoApellido).ToListAsync();
-            return listaDocentes;
+            var obtenerDepartamento =  await (from a in db.Departamentos
+                                                     join b in db.Usuarios
+                                                     on a.Jefe equals b.IdUsuario
+                                                     where idUsuario == a.Jefe
+                                                     select new Departamento
+                                                     {
+                                                         IdDepartamento = a.IdDepartamento,
+                                                         Jefe = a.Jefe
+                                                     }).FirstOrDefaultAsync();
+
+            if(obtenerDepartamento == null)
+            {
+                throw new Exception("Este usuario no es jefe de departamento");
+            }
+            else
+            {
+                var usuariosPorDepartamento = await (from a in db.Departamentos
+                                                     join b in db.Docentes
+                                                     on a.IdDepartamento equals b.IdDepartamento
+                                                     join c in db.Usuarios 
+                                                     on b.IdUsuario equals c.IdUsuario
+                                                     where a.IdDepartamento == obtenerDepartamento.IdDepartamento
+                                                     select new DocenteDTO
+                                                     {
+                                                         idDocente = b.IdDocente,
+                                                         NombreDocente = c.UserName
+                                                     })
+                                                 .ToListAsync();
+
+                return usuariosPorDepartamento;
+            }
         }
 
-        public async Task<List<string>> ObtenerDisponibilidadDocente(int idUsuario)
+        public async Task<List<DisponibilidadDTO>> ObtenerDisponibilidadDocente(int idUsuario)
         {
             var IdDocente = await (from a in db.Usuarios
                                    join b in db.Docentes
@@ -32,47 +54,55 @@ namespace SWIPCA_UNI_API.DataAccess
                                    where a.IdUsuario == idUsuario
                                    select b.IdDocente).FirstOrDefaultAsync();
 
-            var listarDisponibilidad = await (from a in db.Disponibilidads
-                                              where a.IdDocente == IdDocente
-                                              select $"{a.Fecha} {a.TipoJustificación} {a.Periodicidad} {a.Observacíon} {a.Evidencia}").ToListAsync();
+            var disponibilidadList = await (from a in db.Disponibilidads
+                                            where a.IdDocente == IdDocente
+                                            select new DisponibilidadDTO
+                                            {
+                                                Fecha = a.Fecha,
+                                                TipoJustificación = a.TipoJustificación,
+                                                Periodicidad = a.Periodicidad,
+                                                Observación = a.Observacíon,
+                                                Evidencia = a.Evidencia
+                                            }).ToListAsync();
 
-            return listarDisponibilidad;
+            return disponibilidadList;
         }
 
-        public async Task<List<string>> ObtenerAgendaDocente(int idUsuario)
+        public async Task<List<Disponibilidad2DTO>> ObtenerAgendaDocente(int idUsuario)
         {
-            
-
             var AgendaDocenteClases = await (from DC in db.Docentes
-                                             join CS in db.Clases
-                                             on DC.IdDocente equals CS.IdDocente
-                                             join AA in db.Asignaturas
-                                             on CS.IdAsignatura equals AA.IdAsignatura
-                                             join HS in db.Horarios
-                                             on CS.IdClase equals HS.IdClase
-                                             join GT in db.Grupos
-                                             on HS.IdGrupo equals GT.IdGrupo
-                                             join DP in db.Departamentos
-                                             on DC.IdDepartamento equals DP.IdDepartamento
-                                             join FT in db.Facultads
-                                             on DP.IdFacultad equals FT.IdFacultad
-                                             join AU in db.AulaLaboratorios
-                                             on FT.IdFacultad equals AU.IdFacultad
-                                             join DIS in db.Disponibilidads
-                                             on DC.IdDocente equals DIS.IdDocente
+                                             join DP in db.Disponibilidads
+                                             on DC.IdDocente equals DP.IdDocente
                                              where DC.IdDocente == idUsuario
-                                             select $"{DIS.Fecha}{DIS.Observacíon}"
+                                             select new Disponibilidad2DTO
+                                             {
+                                                 Fecha = DP.Fecha,
+                                                 Observacion = DP.Observacíon
+                                             }
                                         ).ToListAsync();
-            if (AgendaDocenteClases.Any())
-            {
+
                 return AgendaDocenteClases.ToList();
-            }
-            else
-            {
-                return new List<string>() { "No hay fechas u observaciones en la agenda del docente." };
-            }
+
         }
-        
+        public class DisponibilidadDTO
+        {
+            public DateTime Fecha { get; set; }
+            public int TipoJustificación { get; set; }
+            public int Periodicidad { get; set; }
+            public string? Observación { get; set; }
+            public string? Evidencia { get; set; }
+        }
+        public class Disponibilidad2DTO
+        {
+            public DateTime Fecha { get; set;}
+            public string? Observacion { get; set;}
+        }
+
+        public class DocenteDTO
+        {
+            public int idDocente { get; set; }
+            public string NombreDocente { get;set; }
+        }
     }
     /*
      El código define una clase DA_Docentes que tiene cuatro métodos asincrónicos 

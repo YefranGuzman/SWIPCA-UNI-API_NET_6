@@ -5,7 +5,7 @@ using static SWIPCA_UNI_API.DataAccess.DA_CargaAcademica;
 
 namespace SWIPCA_UNI_API.Controllers
 {
-    [Route("api/CargaAcademica")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CargaAcademicaController : Controller
     {
@@ -15,7 +15,7 @@ namespace SWIPCA_UNI_API.Controllers
         {
             DA_CargaAcademica = daCargaAcademica;
         }
-        [HttpPost]
+        [HttpPost("/agregarCargaAcademica")]
         public async Task<IActionResult> AgregarCargaAcademica([FromBody] CargaAcademica cargaAcademica)
         {
             try
@@ -40,7 +40,7 @@ namespace SWIPCA_UNI_API.Controllers
                 }
             }
         }
-        [HttpPost("aprobar/{idCargaAcademica}")]
+        [HttpPost("/aprobarCargaAcademica")]
         public async Task<IActionResult> CambiarEstadoCargaAcademicaAprobada(int idCargaAcademica)
         {
             try
@@ -61,7 +61,7 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(500, "Ocurrió un error interno en el servidor");
             }
         }
-        [HttpPost("denegar/{idCargaAcademica}")]
+        [HttpPost("/denegarCargaAcademica")]
         public async Task<IActionResult> CambiarEstadoCargaAcademicaDenegada(int idCargaAcademica)
         {
             try
@@ -82,12 +82,12 @@ namespace SWIPCA_UNI_API.Controllers
                 return StatusCode(500, "Ocurrió un error interno en el servidor");
             }
         }
-        [HttpGet("ObtenerCargas/{idDocente}")]
-        public async Task<ActionResult<List<CargaAcademicaDTO>>> ObtenerCargaAcademicaDocente(int idUsuario, int IdTurno)
+        [HttpGet("/ObtenerCargaAcademica")]
+        public async Task<ActionResult<List<CargaAcademicaDTO>>> getObtenerCargaAcademicaDocente(int IdUsuarioLogin, string nombreturno)
         {
             try
             {
-                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(idUsuario, IdTurno);
+                var cargaAcademica = await DA_CargaAcademica.ObtenerCargaAcademicaDocente(IdUsuarioLogin, nombreturno);
 
                 if (cargaAcademica == null)
                 {
