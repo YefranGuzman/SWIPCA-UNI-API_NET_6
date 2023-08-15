@@ -13,8 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configurar cadena de conexión
-string connectionString = "Server=LAPTOP-0LOPLPE0;Database=XYZ;User Id=Administrador;Password=123;TrustServerCertificate=True;Trusted_Connection=True;";
-
+var connectionString = builder.Configuration.GetConnectionString("DBCargaAcademica");
 // Agregar DbContext
 builder.Services.AddDbContext<DbCargaAcademicaContext>(options =>
     options.UseSqlServer(connectionString));
