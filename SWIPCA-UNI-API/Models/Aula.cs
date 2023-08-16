@@ -5,11 +5,9 @@ namespace SWIPCA_UNI_API.Models;
 
 public partial class Aula
 {
-    public int IdAula { get; set; }
+    public int IdAuLa { get; set; }
 
-    public string Nombre { get; set; } = null!;
-
-    public string? NumeroAula { get; set; }
+    public string NombreAula { get; set; } = null!;
 
     public int IdFacultad { get; set; }
 

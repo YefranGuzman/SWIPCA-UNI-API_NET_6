@@ -8,14 +8,14 @@ namespace SWIPCA_UNI_API.DataAccess
     public class DA_Aula
     {
         DbCargaAcademicaContext cn = new DbCargaAcademicaContext();
-        public async Task<List<AulaLaboratorio>> ListarAula()
+        public async Task<List<Aula>> ListarAula()
         {
-            var listAula = await cn.AulaLaboratorios.ToListAsync();
+            var listAula = await cn.Aula.ToListAsync();
             return listAula.ToList();
         }
-        public async Task<List<AulaLaboratorio>> ListarAulaPorFacultad(int IdUsuario)
+        public async Task<List<Aula>> ListarAulaPorFacultad(int IdUsuario)
         {
-            var aulasAsignadas = await (from aula in cn.AulaLaboratorios
+            var aulasAsignadas = await (from aula in cn.Aula
                                join facultad in cn.Facultads on aula.IdFacultad equals facultad.IdFacultad
                                join departamento in cn.Departamentos on facultad.IdFacultad equals departamento.IdFacultad
                                join docente in cn.Docentes on departamento.IdDepartamento equals docente.IdDepartamento
@@ -24,7 +24,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                select aula
                               ).ToListAsync();
             var aulasNoAsignadas = await (
-                                    from aula in cn.AulaLaboratorios
+                                    from aula in cn.Aula
                                     where !aulasAsignadas.Contains(aula)
                                     select aula
                                       ).ToListAsync();

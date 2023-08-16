@@ -19,7 +19,7 @@ public partial class DbCargaAcademicaContext : DbContext
 
     public virtual DbSet<Asignatura> Asignaturas { get; set; }
 
-    public virtual DbSet<AulaLaboratorio> AulaLaboratorios { get; set; }
+    public virtual DbSet<Aula> Aula { get; set; }
 
     public virtual DbSet<CargaAcademica> CargaAcademicas { get; set; }
 
@@ -109,24 +109,20 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasConstraintName("fk_area_asignatura");
         });
 
-        modelBuilder.Entity<AulaLaboratorio>(entity =>
+        modelBuilder.Entity<Aula>(entity =>
         {
-            entity.HasKey(e => e.IdAuLa).HasName("PK__Aula_Lab__D866F0E385490F57");
+            entity.HasKey(e => e.IdAuLa).HasName("PK__Aula__D866F0E385490F57");
 
-            entity.ToTable("Aula_Laboratorio");
+            entity.ToTable("Aula");
 
             entity.Property(e => e.IdAuLa).HasColumnName("idAuLa");
             entity.Property(e => e.IdFacultad).HasColumnName("idFacultad");
-            entity.Property(e => e.Nombre)
+            entity.Property(e => e.NombreAula)
                 .HasMaxLength(25)
                 .IsUnicode(false)
-                .HasColumnName("nombre");
-            entity.Property(e => e.Tipo)
-                .HasMaxLength(25)
-                .IsUnicode(false)
-                .HasColumnName("tipo");
+                .HasColumnName("nombreAula");
 
-            entity.HasOne(d => d.IdFacultadNavigation).WithMany(p => p.AulaLaboratorios)
+            entity.HasOne(d => d.IdFacultadNavigation).WithMany(p => p.Aulas)
                 .HasForeignKey(d => d.IdFacultad)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_facultad_aula");
@@ -567,10 +563,10 @@ public partial class DbCargaAcademicaContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Estado).HasColumnName("estado");
             entity.Property(e => e.Id).HasMaxLength(450);
-            entity.Property(e => e.Nick)
+            entity.Property(e => e.UserName)
                 .HasMaxLength(10)
                 .IsUnicode(false)
-                .HasColumnName("nick");
+                .HasColumnName("userName");
             entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
             entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
             entity.Property(e => e.PrimerApellido)
@@ -591,7 +587,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("segundoNombre");
-            entity.Property(e => e.TipoRol).HasColumnName("tipoRol");
+            entity.Property(e => e.IdRol).HasColumnName("IdRol");
             entity.Property(e => e.UserName).HasMaxLength(256);
         });
 

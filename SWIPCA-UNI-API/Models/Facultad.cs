@@ -15,7 +15,7 @@ public partial class Facultad
 
     public int Vice { get; set; }
 
-    public virtual ICollection<AulaLaboratorio> AulaLaboratorios { get; } = new List<AulaLaboratorio>();
+    public virtual ICollection<Aula> Aulas { get; } = new List<Aula>();
 
     public virtual ICollection<Carrera> Carreras { get; } = new List<Carrera>();
 

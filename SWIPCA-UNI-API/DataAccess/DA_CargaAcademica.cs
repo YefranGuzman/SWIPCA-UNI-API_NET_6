@@ -70,7 +70,7 @@ namespace SWIPCA_UNI_API.DataAccess
         {
             var rolUsuario = await (from a in db.Usuarios
                                     where a.IdUsuario == IdUsuarioLogin
-                                    select a.TipoRol).FirstOrDefaultAsync();
+                                    select a.IdRol).FirstOrDefaultAsync();
 
             if(rolUsuario == 0)
             {

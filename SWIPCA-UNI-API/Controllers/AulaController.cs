@@ -9,7 +9,7 @@ namespace SWIPCA_UNI_API.Controllers
     public class AulaController : Controller
     {
         [HttpGet]
-        public async Task<List<AulaLaboratorio>> GetListaAula()
+        public async Task<List<Aula>> GetListaAula()
         {
             var list = new DA_Aula();
             var Asignaturas = await list.ListarAula();
@@ -17,7 +17,7 @@ namespace SWIPCA_UNI_API.Controllers
             return Asignaturas;
         }
         [HttpGet("{IdDocente}")]
-        public async Task<List<AulaLaboratorio>> GetListarAulaPorFacultad(int IdDocente)
+        public async Task<List<Aula>> GetListarAulaPorFacultad(int IdDocente)
         {
             var list = new DA_Aula();
             var Asignatura = await list.ListarAulaPorFacultad(IdDocente);
