@@ -15,9 +15,5 @@ public partial class Asignatura
 
     public int IdArea { get; set; }
 
-    public virtual ICollection<Clase> Clases { get; } = new List<Clase>();
-
     public virtual ICollection<Historial> Historials { get; } = new List<Historial>();
-
-    public virtual Area IdAreaNavigation { get; set; } = null!;
 }

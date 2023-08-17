@@ -38,7 +38,6 @@ builder.Services.AddScoped<DA_Grupo>();
 builder.Services.AddScoped<DA_Carrera>();
 builder.Services.AddScoped<DA_Docentes>();
 builder.Services.AddScoped<DA_Disponibilidad>();
-builder.Services.AddScoped<DA_Clase>();
 builder.Services.AddScoped<DA_CargaAcademica>();
 builder.Services.AddScoped<DA_Aula>();
 builder.Services.AddScoped<DA_Asignatura>();

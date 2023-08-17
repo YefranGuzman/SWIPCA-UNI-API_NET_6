@@ -11,5 +11,5 @@ public partial class Aula
 
     public int IdFacultad { get; set; }
 
-    public virtual Facultad IdFacultadNavigation { get; set; } = null!;
+    //public virtual Facultad IdFacultadNavigation { get; set; } = null!;
 }
