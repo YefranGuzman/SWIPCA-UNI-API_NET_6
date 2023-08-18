@@ -15,7 +15,5 @@ public partial class Horario
 
     public virtual Carrera IdCarreraNavigation { get; set; }
 
-    public virtual Clase IdClaseNavigation { get; set; }
-
     public virtual Grupo IdGrupoNavigation { get; set; }
 }

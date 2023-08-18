@@ -13,8 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Configurar cadena de conexión
-string connectionString = "Server=LAPTOP-0LOPLPE0;Database=XYZ;User Id=Administrador;Password=123;TrustServerCertificate=True;Trusted_Connection=True;";
-
+var connectionString = builder.Configuration.GetConnectionString("DBCargaAcademica");
 // Agregar DbContext
 builder.Services.AddDbContext<DbCargaAcademicaContext>(options =>
     options.UseSqlServer(connectionString));
@@ -39,7 +38,6 @@ builder.Services.AddScoped<DA_Grupo>();
 builder.Services.AddScoped<DA_Carrera>();
 builder.Services.AddScoped<DA_Docentes>();
 builder.Services.AddScoped<DA_Disponibilidad>();
-builder.Services.AddScoped<DA_Clase>();
 builder.Services.AddScoped<DA_CargaAcademica>();
 builder.Services.AddScoped<DA_Aula>();
 builder.Services.AddScoped<DA_Asignatura>();

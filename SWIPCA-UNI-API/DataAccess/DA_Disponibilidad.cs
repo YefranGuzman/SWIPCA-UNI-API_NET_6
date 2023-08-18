@@ -37,7 +37,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                    join b in db.Docentes
                                    on a.IdUsuario equals b.IdUsuario
                                    where a.IdUsuario == idUsuario
-                                   select a.TipoRol).FirstAsync();
+                                   select a.IdRol).FirstAsync();
 
             if(rol == 0)
             {
