@@ -10,7 +10,7 @@
                 AddJsonFile("appsettings.json").Build();
 
             connectionstring = connection.GetSection
-                ("ConnectionStrings:ConnnectonString").Value;
+                ("DBCargaAcademica").Value;
         }
         public string ConexionSQL()
         {

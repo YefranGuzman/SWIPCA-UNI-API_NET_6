@@ -14,68 +14,14 @@ namespace SWIPCA_UNI_API.DataAccess
     {
         DbCargaAcademicaContext cn = new();
         private static List<string> activeTokens = new List<string>();
-        public async Task<UsuarioI_DTO> ObtenerInformacionUsuario(int idUsuario)
+        public async Task<Usuario> ObtenerUsuarioDocente(int idUsuario)
         {
-            var rolUsuario = await (from a in cn.Usuarios
-                                 where a.IdUsuario == idUsuario
-                                 select a.TipoRol).FirstOrDefaultAsync();
+            var usuario = await (from a in cn.Usuarios
+                                 where a.IdUsuario == idUsuario && a.IdRol == 1 && a.Estado == 1
+                                 select a.PrimerNombre + " " + a.PrimerApellido).FirstOrDefaultAsync();
 
-            if (rolUsuario == 2)
-            {
-                var informacionUsuario = await (from a in cn.Usuarios
-                                                join b in cn.Docentes
-                                                on a.IdUsuario equals b.IdUsuario
-                                                join c in cn.Departamentos
-                                                on b.IdDepartamento equals c.IdDepartamento
-                                                where a.IdUsuario == idUsuario
-                                                select new UsuarioI_DTO
-                                                {
-                                                    nombrecompleto = a.UserName,
-                                                    puesto = "Docente",
-                                                    cargo = c.Nombre
-                                                }).FirstAsync();
-                return informacionUsuario;
 
-            } if (rolUsuario == 3)
-            {
-                var informacionUsuario = await (from a in cn.Usuarios
-                                                join b in cn.Departamentos
-                                                on a.IdUsuario equals b.Jefe
-                                                where a.IdUsuario == idUsuario
-                                                select new UsuarioI_DTO
-                                                {
-                                                    nombrecompleto = a.UserName,
-                                                    puesto = "Jefe Departamento",
-                                                    cargo = b.Nombre
-                                                }).FirstAsync();
-                return informacionUsuario;
-            } if(rolUsuario == 4)
-            {
-                var informacionUsuario = await (from a in cn.Usuarios
-                                                join b in cn.Facultads
-                                                on a.IdUsuario equals b.Vice
-                                                where a.IdUsuario == idUsuario
-                                                select new UsuarioI_DTO
-                                                {
-                                                    nombrecompleto = a.UserName,
-                                                    puesto = "Vicedecando",
-                                                    cargo = b.Nombre
-                                                }).FirstAsync();
-                return informacionUsuario;
-            } else if(rolUsuario==5)
-            {
-                var informacionUsuario = await (from a in cn.Usuarios
-                                                where a.IdUsuario == idUsuario
-                                                select new UsuarioI_DTO
-                                                {
-                                                    nombrecompleto = a.UserName,
-                                                    puesto = "Docente",
-                                                    cargo = "Administrador"
-                                                }).FirstAsync();
-                return informacionUsuario;
-            }
-
-            throw new InvalidOperationException(message: "No hay usuario valido");
+            return null;
         }
         public async Task<Usuario> ObtenerDocente(int idUsuario)
         {
@@ -114,13 +60,13 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return usuario;
         }
-        public async Task<Usuario> ObtenerPorNick(string Nick)
+        public async Task<Usuario> ObtenerPorUserName(string UserName)
         {
-            var usuario = await cn.Usuarios.FirstOrDefaultAsync(x => x.Nick == Nick);
+            var usuario = await cn.Usuarios.FirstOrDefaultAsync(x => x.UserName == UserName);
 
             if (usuario == null)
             {
-                throw new Exception("No se encontró ningún usuario con ese Nick.");
+                throw new Exception("No se encontró ningún usuario con ese UserName.");
             }
             return usuario;
         }

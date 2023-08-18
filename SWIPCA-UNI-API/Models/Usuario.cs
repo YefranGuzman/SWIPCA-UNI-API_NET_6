@@ -8,9 +8,36 @@ public partial class Usuario : IdentityUser<int>
 {
     public int IdUsuario { get; set; }
 
-    public string Id { get; set; } = null!;
+    public string PrimerNombre { get; set; } = null!;
+
+    public string SegundoNombre { get; set; } = null!;
+
+    public string TercerNombre { get; set; } = null!;
+
+    public string PrimerApellido { get; set; } = null!;
+
+    public string SegundoApellido { get; set; } = null!;
+
+    public int IdRol { get; set; }
+
+    public int? IdContrato { get; set; }
+
+    public int? IdFunciones { get; set; }
 
     public string UserName { get; set; } = null!;
+
+    public string? Email { get; set; }
+
+    public string Celular { get; set; } = null!;
+
+    public string Contrasena { get; set; } = null!;
+
+    public int? Estado { get; set; }
+
+
+
+
+    public string Id { get; set; } = null!;
 
     public string NormalizedUserName { get; set; } = null!;
 
@@ -18,9 +45,7 @@ public partial class Usuario : IdentityUser<int>
 
     public string? NormalizedEmail { get; set; }
 
-    public string? PasswordHash { get; set; }
-
-    public string? Email { get; set; }
+    public string? PasswordHash { get; set; }    
 
     public bool EmailConfirmed { get; set; }
 
@@ -34,25 +59,7 @@ public partial class Usuario : IdentityUser<int>
 
     public bool? LockoutEnabled { get; set; }
 
-    public int? AccessFailedCount { get; set; }
-
-    public string PrimerNombre { get; set; } = null!;
-
-    public string SegundoNombre { get; set; } = null!;
-
-    public string PrimerApellido { get; set; } = null!;
-
-    public string SegundoApellido { get; set; } = null!;
-
-    public int TipoRol { get; set; }
-
-    public string Celular { get; set; } = null!;
-
-    public string Nick { get; set; } = null!;
-
-    public string Contrasena { get; set; } = null!;
-
-    public int? Estado { get; set; }
+    public int? AccessFailedCount { get; set; }         
 
     public string? ConcurrencyStamp { get; set; }
 

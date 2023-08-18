@@ -7,5 +7,5 @@ public partial class Rol
 {
     public int IdRol { get; set; }
 
-    public string Titulo { get; set; } = null!;
+    public string Descripcion { get; set; } = null!;
 }

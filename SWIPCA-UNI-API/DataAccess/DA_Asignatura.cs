@@ -14,7 +14,7 @@ namespace SWIPCA_UNI_API.DataAccess
         {
             var rolUsuario = await (from a in cn.Usuarios
                                     where a.IdUsuario == idUsuario
-                                    select a.TipoRol).FirstOrDefaultAsync();
+                                    select a.IdRol).FirstOrDefaultAsync();
 
             if(rolUsuario == 4)
             {

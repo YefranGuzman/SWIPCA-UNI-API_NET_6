@@ -7,13 +7,12 @@ public partial class Contrato
 {
     public int IdContrato { get; set; }
 
-    public string Tipo { get; set; } = null!;
+    public string IdentificadorContrato { get; set; } = null!;
 
-    public TimeSpan HorasLaboral { get; set; }
+    public string TipoContrato { get; set; } = null!;
 
-    public string Descripcion { get; set; } = null!;
+    public int HorasMinimas { get; set; }
+    public int HorasMaximas { get; set; }
 
-    public string Jornada { get; set; } = null!;
-
-    public virtual ICollection<Docente> Docentes { get; } = new List<Docente>();
+    //public virtual ICollection<Docente> Docentes { get; } = new List<Docente>();
 }

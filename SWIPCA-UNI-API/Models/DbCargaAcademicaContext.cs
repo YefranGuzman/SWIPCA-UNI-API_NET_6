@@ -15,19 +15,20 @@ public partial class DbCargaAcademicaContext : DbContext
     {
     }
 
-    public virtual DbSet<Area> Areas { get; set; }
+    public virtual DbSet<Aula> Aula { get; set; }
+    public virtual DbSet<Contrato> Contrato { get; set; }
+    public virtual DbSet<Rol> Rol { get; set; }
+    public virtual DbSet<Periodo> Periodo { get; set; }
 
-    public virtual DbSet<Asignatura> Asignaturas { get; set; }
 
-    public virtual DbSet<AulaLaboratorio> AulaLaboratorios { get; set; }
+
+    public virtual DbSet<Asignatura> Asignaturas { get; set; }    
 
     public virtual DbSet<CargaAcademica> CargaAcademicas { get; set; }
 
     public virtual DbSet<Carrera> Carreras { get; set; }
 
-    public virtual DbSet<Clase> Clases { get; set; }
-
-    public virtual DbSet<Contrato> Contratos { get; set; }
+    
 
     public virtual DbSet<Departamento> Departamentos { get; set; }
 
@@ -47,7 +48,7 @@ public partial class DbCargaAcademicaContext : DbContext
 
     public virtual DbSet<Pensum> Pensums { get; set; }
 
-    public virtual DbSet<Rol> Rols { get; set; }
+    
 
     public virtual DbSet<TempTabla> TempTablas { get; set; }
 
@@ -58,27 +59,68 @@ public partial class DbCargaAcademicaContext : DbContext
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=LAPTOP-0LOPLPE0;Database=DB_Carga_Academica;User Id=Administrador;Password=123;TrustServerCertificate=True;Trusted_Connection=True;");
-
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json")
+               .Build();
+            var connectionString = configuration.GetConnectionString("DBCargaAcademica");
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Area>(entity =>
+        modelBuilder.Entity<Aula>(entity =>
         {
-            entity.HasKey(e => e.IdArea).HasName("PK__Area__750ECEA499ECB82B");
+            entity.HasKey(e => e.IdAuLa).HasName("PK__Aula__D866F0E385490F57");
 
-            entity.ToTable("Area");
+            entity.ToTable("Aula");
 
-            entity.Property(e => e.IdArea).HasColumnName("idArea");
-            entity.Property(e => e.Descripcion)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("descripcion");
-            entity.Property(e => e.Diciplina)
+            entity.Property(e => e.IdAuLa).HasColumnName("idAuLa");
+            entity.Property(e => e.NombreAula)
                 .HasMaxLength(25)
                 .IsUnicode(false)
-                .HasColumnName("diciplina");
+                .HasColumnName("nombreAula");
+            entity.Property(e => e.IdFacultad).HasColumnName("idFacultad");
         });
+
+        modelBuilder.Entity<Contrato>(entity =>
+        {
+            entity.HasKey(e => e.IdContrato).HasName("PK__Contrato__91431FE1585BDF09");
+
+            entity.ToTable("Contrato");
+
+            entity.Property(e => e.IdContrato).HasColumnName("idContrato");
+            entity.Property(e => e.IdentificadorContrato)
+                .HasMaxLength(25)
+                .IsUnicode(false)
+                .HasColumnName("identificadorContrato");
+            entity.Property(e => e.TipoContrato)
+                .HasMaxLength(25)
+                .IsUnicode(false)
+                .HasColumnName("tipoContrato");
+            entity.Property(e => e.HorasMinimas).HasColumnName("horasMinimas");
+            entity.Property(e => e.HorasMaximas).HasColumnName("horasMaximas");
+        });
+
+        modelBuilder.Entity<Rol>(entity =>
+        {
+            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F7681B860AD");
+
+            entity.ToTable("Rol");
+
+            entity.Property(e => e.IdRol).HasColumnName("idRol");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(30)
+                .IsUnicode(false)
+                .HasColumnName("descripcion");
+        });
+
+
+
+
 
         modelBuilder.Entity<Asignatura>(entity =>
         {
@@ -94,35 +136,9 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("nombre");
-
-            entity.HasOne(d => d.IdAreaNavigation).WithMany(p => p.Asignaturas)
-                .HasForeignKey(d => d.IdArea)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_area_asignatura");
         });
 
-        modelBuilder.Entity<AulaLaboratorio>(entity =>
-        {
-            entity.HasKey(e => e.IdAuLa).HasName("PK__Aula_Lab__D866F0E385490F57");
-
-            entity.ToTable("Aula_Laboratorio");
-
-            entity.Property(e => e.IdAuLa).HasColumnName("idAuLa");
-            entity.Property(e => e.IdFacultad).HasColumnName("idFacultad");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(25)
-                .IsUnicode(false)
-                .HasColumnName("nombre");
-            entity.Property(e => e.Tipo)
-                .HasMaxLength(25)
-                .IsUnicode(false)
-                .HasColumnName("tipo");
-
-            entity.HasOne(d => d.IdFacultadNavigation).WithMany(p => p.AulaLaboratorios)
-                .HasForeignKey(d => d.IdFacultad)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_facultad_aula");
-        });
+        
 
         modelBuilder.Entity<CargaAcademica>(entity =>
         {
@@ -144,11 +160,6 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasForeignKey(d => d.IdCarrera)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_CargaAcademica_Carrera");
-
-            entity.HasOne(d => d.IdClaseNavigation).WithMany(p => p.CargaAcademicas)
-                .HasForeignKey(d => d.IdClase)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_CargaAcademica_Clase");
 
             entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.CargaAcademicas)
                 .HasForeignKey(d => d.IdDocente)
@@ -187,55 +198,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasConstraintName("fk_facultad_carrera");
         });
 
-        modelBuilder.Entity<Clase>(entity =>
-        {
-            entity.HasKey(e => e.IdClase).HasName("PK__Clase__17317A68041E1C0C");
-
-            entity.ToTable("Clase");
-
-            entity.Property(e => e.IdClase).HasColumnName("idClase");
-            entity.Property(e => e.Dia)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("dia");
-            entity.Property(e => e.Docente).HasColumnName("docente");
-            entity.Property(e => e.HoraFinal).HasColumnName("horaFinal");
-            entity.Property(e => e.HoraInicio).HasColumnName("horaInicio");
-            entity.Property(e => e.IdAsignatura).HasColumnName("idAsignatura");
-            entity.Property(e => e.IdDocente).HasColumnName("idDocente");
-
-            entity.HasOne(d => d.IdAsignaturaNavigation).WithMany(p => p.Clases)
-                .HasForeignKey(d => d.IdAsignatura)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_asingnatura_clase");
-
-            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.Clases)
-                .HasForeignKey(d => d.IdDocente)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_docente_clase");
-        });
-
-        modelBuilder.Entity<Contrato>(entity =>
-        {
-            entity.HasKey(e => e.IdContrato).HasName("PK__Contrato__91431FE1585BDF09");
-
-            entity.ToTable("Contrato");
-
-            entity.Property(e => e.IdContrato).HasColumnName("idContrato");
-            entity.Property(e => e.Descripcion)
-                .HasMaxLength(25)
-                .IsUnicode(false)
-                .HasColumnName("descripcion");
-            entity.Property(e => e.HorasLaboral).HasColumnName("horasLaboral");
-            entity.Property(e => e.Jornada)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("jornada");
-            entity.Property(e => e.Tipo)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("tipo");
-        });
+              
 
         modelBuilder.Entity<Departamento>(entity =>
         {
@@ -311,10 +274,10 @@ public partial class DbCargaAcademicaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Docente_Usuario1");
 
-            entity.HasOne(d => d.TipoContratoNavigation).WithMany(p => p.Docentes)
-                .HasForeignKey(d => d.TipoContrato)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_contrato_docente");
+            //entity.HasOne(d => d.TipoContratoNavigation).WithMany(p => p.Docentes)
+            //    .HasForeignKey(d => d.TipoContrato)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("fk_contrato_docente");
         });
 
         modelBuilder.Entity<Duraccion>(entity =>
@@ -380,7 +343,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_turno_grupo");
         });
-
+      
         modelBuilder.Entity<Historial>(entity =>
         {
             entity.HasKey(e => e.IdHistorial).HasName("PK__Historia__4712FB33EADD85CB");
@@ -428,11 +391,6 @@ public partial class DbCargaAcademicaContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fk_carrera_horario");
 
-            entity.HasOne(d => d.IdClaseNavigation).WithMany(p => p.Horarios)
-                .HasForeignKey(d => d.IdClase)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_clase_horario");
-
             entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.Horarios)
                 .HasForeignKey(d => d.IdGrupo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -467,18 +425,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasConstraintName("fk_Duraccion_pensum");
         });
 
-        modelBuilder.Entity<Rol>(entity =>
-        {
-            entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F7681B860AD");
-
-            entity.ToTable("Rol");
-
-            entity.Property(e => e.IdRol).HasColumnName("idRol");
-            entity.Property(e => e.Titulo)
-                .HasMaxLength(30)
-                .IsUnicode(false)
-                .HasColumnName("titulo");
-        });
+        
 
         modelBuilder.Entity<TempTabla>(entity =>
         {
@@ -559,10 +506,10 @@ public partial class DbCargaAcademicaContext : DbContext
             entity.Property(e => e.Email).HasMaxLength(256);
             entity.Property(e => e.Estado).HasColumnName("estado");
             entity.Property(e => e.Id).HasMaxLength(450);
-            entity.Property(e => e.Nick)
+            entity.Property(e => e.UserName)
                 .HasMaxLength(10)
                 .IsUnicode(false)
-                .HasColumnName("nick");
+                .HasColumnName("userName");
             entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
             entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
             entity.Property(e => e.PrimerApellido)
@@ -583,7 +530,7 @@ public partial class DbCargaAcademicaContext : DbContext
                 .HasMaxLength(25)
                 .IsUnicode(false)
                 .HasColumnName("segundoNombre");
-            entity.Property(e => e.TipoRol).HasColumnName("tipoRol");
+            entity.Property(e => e.IdRol).HasColumnName("IdRol");
             entity.Property(e => e.UserName).HasMaxLength(256);
         });
 

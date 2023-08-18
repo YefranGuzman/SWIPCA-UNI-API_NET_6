@@ -27,12 +27,12 @@ namespace SWIPCA_UNI_API.Controllers
             _userManager = userManager;
             _config = config;
         }
-        [HttpGet("GetInformacionUsuario")]
-        public async Task<ActionResult<UsuarioI_DTO>> InformacionUsuario(int idUsuario)
+        [HttpGet("ListarUsuario")]
+        public async Task<ActionResult<UsuarioI_DTO>> UsuarioDocente(int idUsuario)
         {
             try
             {
-                var usuario = await _daUsuario.ObtenerInformacionUsuario(idUsuario);
+                var usuario = await _daUsuario.ObtenerUsuarioDocente(idUsuario);
 
                 if (usuario != null)
                 {
@@ -61,7 +61,7 @@ namespace SWIPCA_UNI_API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
-            var usuario = await _daUsuario.ObtenerPorNick(model.Nick);
+            var usuario = await _daUsuario.ObtenerPorUserName(model.UserName);
 
             if (usuario == null || !_daUsuario.VerificarContrasena(usuario, model.Contrasena))
             {
@@ -128,7 +128,7 @@ namespace SWIPCA_UNI_API.Controllers
 
     public class LoginRequest
     {
-        public string Nick { get; set; }
+        public string UserName { get; set; }
         public string Contrasena { get; set; }
     }
 }
