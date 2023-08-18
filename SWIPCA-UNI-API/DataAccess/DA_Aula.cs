@@ -23,6 +23,7 @@ namespace SWIPCA_UNI_API.DataAccess
                                where docente.IdUsuario == IdUsuario
                                select aula
                               ).ToListAsync();
+
             var aulasNoAsignadas = await (
                                     from aula in cn.AulaLaboratorios
                                     where !aulasAsignadas.Contains(aula)

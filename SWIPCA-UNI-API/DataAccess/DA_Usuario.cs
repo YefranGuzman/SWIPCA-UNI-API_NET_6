@@ -1,5 +1,4 @@
 ﻿using SWIPCA_UNI_API.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -86,11 +85,60 @@ namespace SWIPCA_UNI_API.DataAccess
 
             return usuario;
         }
-        public async Task<Usuario> AgregarUsuario(Usuario usuario)
+        public async Task<Usuario> AgregarUsuario(Usuario usuario, int IdDepartamento, int tipocontrato)
         {
-            usuario.PasswordHash = HashPassword(usuario.Contrasena);
-            usuario.UserName = usuario.PrimerNombre + " " + usuario.SegundoNombre + " " + usuario.PrimerApellido + " " + usuario.SegundoApellido;
-            usuario.NormalizedUserName = usuario.UserName;
+            if(usuario.TipoRol == 2)
+            {
+                usuario.PasswordHash = HashPassword(usuario.Contrasena);
+                usuario.UserName = usuario.PrimerNombre + " " + usuario.SegundoNombre + " " + usuario.PrimerApellido + " " + usuario.SegundoApellido;
+                usuario.NormalizedUserName = usuario.UserName;
+                usuario.TipoRol = 2;
+
+                cn.Add(usuario);
+                await cn.SaveChangesAsync();
+
+                var Docente = new Docente
+                {
+                    IdUsuario = usuario.IdUsuario,
+                    IdDepartamento = IdDepartamento,
+                    Disponibilidad = 0, //0 no tiene disponibilidades activas
+                    TipoContrato = tipocontrato,
+                    Derpartamento = 2,
+                    Estado = 0 //0 es Activo
+                };
+                cn.Add(Docente); 
+                await cn.SaveChangesAsync();
+                
+            }
+            if(usuario.TipoRol == 3)
+            {
+                usuario.PasswordHash = HashPassword(usuario.Contrasena);
+                usuario.UserName = usuario.PrimerNombre + " " + usuario.SegundoNombre + " " + usuario.PrimerApellido + " " + usuario.SegundoApellido;
+                usuario.NormalizedUserName = usuario.UserName;
+                usuario.TipoRol = 3;
+
+                cn.Add(usuario);
+                await cn.SaveChangesAsync();
+
+                var Docente = new Docente
+                {
+                    IdUsuario = usuario.IdUsuario,
+                    IdDepartamento = IdDepartamento,
+                    Disponibilidad = 0, //0 no tiene disponibilidades activas
+                    TipoContrato = tipocontrato,
+                    Derpartamento = 3,
+                    Estado = 0 //0 es Activo
+                };
+                cn.Add(Docente);
+                await cn.SaveChangesAsync();
+            }
+            if(usuario.TipoRol == 4)
+            {
+                usuario.PasswordHash = HashPassword(usuario.Contrasena);
+                usuario.UserName = usuario.PrimerNombre + " " + usuario.SegundoNombre + " " + usuario.PrimerApellido + " " + usuario.SegundoApellido;
+                usuario.NormalizedUserName = usuario.UserName;
+                usuario.TipoRol = 4;
+            }
 
             await cn.AddAsync(usuario);
             await cn.SaveChangesAsync();
@@ -179,7 +227,6 @@ namespace SWIPCA_UNI_API.DataAccess
         {
             activeTokens.Remove(token);
         }
-
         public class UsuarioI_DTO
         {
             [JsonProperty("nombrecompleto")]

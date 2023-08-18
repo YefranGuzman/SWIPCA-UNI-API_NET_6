@@ -73,7 +73,7 @@ namespace SWIPCA_UNI_API.DataAccess
             var AgendaDocenteClases = await (from DC in db.Docentes
                                              join DP in db.Disponibilidads
                                              on DC.IdDocente equals DP.IdDocente
-                                             where DC.IdDocente == idUsuario
+                                             where DC.IdDocente == idUsuario && DP.Fecha == DateTime.Today
                                              select new Disponibilidad2DTO
                                              {
                                                  Fecha = DP.Fecha,
@@ -97,7 +97,6 @@ namespace SWIPCA_UNI_API.DataAccess
             public DateTime Fecha { get; set;}
             public string? Observacion { get; set;}
         }
-
         public class DocenteDTO
         {
             public int idDocente { get; set; }

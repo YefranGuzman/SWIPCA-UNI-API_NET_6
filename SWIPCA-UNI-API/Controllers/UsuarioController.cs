@@ -2,11 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Configuration;
 using SWIPCA_UNI_API.DataAccess;
 using SWIPCA_UNI_API.Models; // Asumiendo que la clase 'Usuario' está en el espacio de nombres 'SWIPCA_UNI_API.Models'
 using System.Text;
-using System.Threading.Tasks;
 using static SWIPCA_UNI_API.DataAccess.DA_Usuario;
 
 namespace SWIPCA_UNI_API.Controllers
@@ -18,7 +16,7 @@ namespace SWIPCA_UNI_API.Controllers
 
         private readonly DA_Usuario _daUsuario;
         private readonly JwtService _jwtService;
-        private readonly UserManager<Models.Usuario> _userManager;
+        private readonly UserManager<Usuario> _userManager;
         private readonly IConfiguration _config;
         public UsuarioController(DA_Usuario daUsuario, DA_Usuario.JwtService jwtService,UserManager<Models.Usuario> userManager, IConfiguration config)
         {
@@ -53,10 +51,10 @@ namespace SWIPCA_UNI_API.Controllers
             }
         }
         [HttpPost("PostNuevoUsuario")]
-        public async Task<ActionResult<Usuario>> PostCrearUsuario([FromBody] Usuario usuario)
+        public async Task<ActionResult<Usuario>> PostCrearUsuario([FromBody] Usuario usuario, int IdDepartamento, int tipocontrato)
         {
-            var nuevoUsuario = await _daUsuario.AgregarUsuario(usuario);
-            return Ok();
+            var nuevoUsuario = await _daUsuario.AgregarUsuario(usuario, IdDepartamento, tipocontrato);
+            return Ok(nuevoUsuario);
         }
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)

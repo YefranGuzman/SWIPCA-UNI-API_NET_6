@@ -68,9 +68,7 @@ namespace SWIPCA_UNI_API.DataAccess
         }
         public async Task<List<CargaAcademicaDTO>> ObtenerCargaAcademicaDocente(int IdUsuarioLogin, string nombreturno)
         {
-            var rolUsuario = await (from a in db.Usuarios
-                                    where a.IdUsuario == IdUsuarioLogin
-                                    select a.TipoRol).FirstOrDefaultAsync();
+            var rolUsuario = await (from a in db.Usuarios where a.IdUsuario == IdUsuarioLogin select a.TipoRol).FirstOrDefaultAsync();
 
             if(rolUsuario == 0)
             {
@@ -90,23 +88,25 @@ namespace SWIPCA_UNI_API.DataAccess
                 throw new ArgumentException("No tiene turnos asociados");
             }
 
-            var jefeACargo = await (from a in db.CargaAcademicas
-                                    join b in db.Departamentos
-                                    on a.IdJefe equals b.Jefe
-                                    where b.Jefe == IdUsuarioLogin
-                                    select a.IdJefe).FirstOrDefaultAsync();
-            if(jefeACargo == 0)
-            {
-                throw new Exception("Jefe no encontrado");
-            }
-
             var obtenerlistaAsignaturas = await (from a in db.Docentes
                                                  join b in db.Clases
-                                                 on a.IdDocente equals b.IdDocente
-                                                 select b.IdClase).ToListAsync();
+                                                 on a.IdDocente equals b.IdDocente select b.IdClase).ToListAsync();
 
             if (rolUsuario == 2)
             {
+                var ObtenerDocente = await db.Docentes.FirstAsync(a => a.IdUsuario == IdUsuarioLogin);
+
+                var jefeACargo = await (from a in db.CargaAcademicas
+                                        join b in db.Departamentos
+                                        on a.IdJefe equals b.Jefe
+                                        where b.IdDepartamento == ObtenerDocente.IdDepartamento
+                                        select a.IdJefe).FirstOrDefaultAsync(); //Aqui apunta al usuario y no al jefe
+
+                if (jefeACargo == 0)
+                {
+                    throw new Exception("Jefe no encontrado");
+                }
+
                 var cargaAcademica = await (from a in db.CargaAcademicas
                                             join b in db.Docentes
                                             on a.IdDocente equals b.IdDocente
@@ -133,6 +133,16 @@ namespace SWIPCA_UNI_API.DataAccess
 
             }if (rolUsuario == 3)
             {
+                var jefeACargo = await (from a in db.CargaAcademicas
+                                        join b in db.Departamentos
+                                    on a.IdJefe equals b.Jefe
+                                        where b.Jefe == IdUsuarioLogin
+                                        select a.IdJefe).FirstOrDefaultAsync(); //Aqui apunta al usuario y no al jefe
+
+                if (jefeACargo == 0)
+                {
+                    throw new Exception("Jefe no encontrado");
+                }
                 var obtenerdepartamento = await (from a in db.Departamentos
                                                  join b in db.Usuarios
                                                  on a.Jefe equals b.IdUsuario
